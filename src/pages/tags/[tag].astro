@@ -1,0 +1,45 @@
+---
+import { getCollection } from "astro:content";
+import BlogCard from "../../components/blog-card.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("posts");
+
+  const uniqueTags = [
+    ...new Set(allPosts.map((post: any) => post.data.tags).flat()),
+  ];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post: any) =>
+      post.data.tags.includes(tag),
+    );
+
+    filteredPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+
+const tag = Astro.params.tag;
+const posts = Astro.props.posts;
+---
+
+<Layout title={`${tag} - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <main>
+    <h1 class="mb-5 text-xl font-medium">Tag: {tag}</h1>
+    <ul class="flex flex-col gap-1.5">
+      {
+        posts.map((post) => (
+          <li>
+            <BlogCard post={post} />
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Layout>

@@ -1,0 +1,44 @@
+---
+import TagBadge from "../../components/tag-badge.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import Layout from "../../layouts/Layout.astro";
+
+const posts = await Astro.glob("../../content/posts/*.md");
+const publishedPosts = posts.filter(
+  (post) => post.frontmatter.status === "published",
+);
+
+// Extract all tags from published posts
+const allTags = publishedPosts.flatMap((post) => post.frontmatter.tags || []);
+
+// Count occurrences of each tag
+const tagCounts = allTags.reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1;
+  return acc;
+}, {});
+
+// Convert to array of [tag, count] pairs and sort alphabetically
+const sortedTags = Object.entries(tagCounts).sort((a, b) =>
+  a[0].localeCompare(b[0]),
+);
+---
+
+<Layout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  className="flex h-svh max-w-sm flex-col justify-center"
+>
+  <main>
+    <div>
+      <ul class="flex flex-wrap gap-2">
+        {
+          sortedTags.map(([tag, count]) => (
+            <li>
+              <TagBadge tag={tag} count={count} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </main>
+</Layout>
