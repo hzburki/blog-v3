@@ -64,11 +64,10 @@ In our particular case serverless manages the following resources;
 
 <BlogImage
   client:load
-  fullWidth={true}
+  caption="AWS Serverless Architecture Diagram"
   alt="Serverless Framework converting code into product"
   src="/static/post-images/serverless-api-on-the-go/serverless-flow-diagram.png"
 />
-{/* ![Serverless Framework converting code into product](/static/post-images/serverless-api-on-the-go/serverless-flow-diagram.png) */}
 
 ### Step 1
 
@@ -324,7 +323,12 @@ serverless deploy --env dev --stage qa
 - **--env** → enable using specific env variables only
 - **–-stage** → enables deploying to specific environment only
 
-![deploy your code with serverless](/static/post-images/serverless-api-on-the-go/deploy-serverless.png)
+<BlogImage
+  client:load
+  alt="deploy your code with serverless"
+  caption="Deploy logs with aws serverless"
+  src="/static/post-images/serverless-api-on-the-go/deploy-serverless.png"
+/>
 
 ### Remove your Code
 
@@ -338,7 +342,12 @@ The above command removes all AWS resources used in your application. Adding “
 
 Below are the metrics as shown by CloudWatch in the AWS console, after invoking each lambda 500 times via Postman.
 
-![](/static/post-images/serverless-api-on-the-go/lambda-results.png)
+<BlogImage
+  client:load
+  alt="aws lambda results"
+  caption="AWS Lambda Performance"
+  src="/static/post-images/serverless-api-on-the-go/lambda-results.png"
+/>
 
 This is my approach to setting up a production ready API using Serverless Framework.
 Once again you use any language you prefer with any database. With slight modifications
