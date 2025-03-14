@@ -13,15 +13,27 @@ tags:
   - css
 ---
 
+import { BlogImage } from "../../components/blog";
+
 # Use Case
 
 A simple UI containing a header, main and footer. The footer should stick to the bottom if content above it (main) does not fill the whole view and get pushed down if the content (main) exceeds the view height.
 
-![](/static/post-images/full-height-gatsby/what-we-have.png)
+<BlogImage
+  client:load
+  extendWidth
+  alt="What we have"
+  caption="What we have"
+  src="/static/post-images/full-height-gatsby/what-we-have.png"
+/>
 
-what we have!
-
-![](/static/post-images/full-height-gatsby/what-we-want.png)
+<BlogImage
+  client:load
+  extendWidth
+  alt="What we want"
+  caption="What we want"
+  src="/static/post-images/full-height-gatsby/what-we-want.png"
+/>
 
 what we want.
 
@@ -31,7 +43,13 @@ Gatsby uses [@reach/router](https://github.com/reach/router) which wraps the 
 
 **But!!! 😮😮😮**
 
-![](/static/post-images/full-height-gatsby/additional-div-highlighted.png)
+<BlogImage
+  client:load
+  extendWidth
+  alt="Additional div highlighted"
+  caption="Additional div highlighted"
+  src="/static/post-images/full-height-gatsby/additional-div-highlighted.png"
+/>
 
 additional div highlighted
 
@@ -104,7 +122,13 @@ import "./src/styles/global.css";
 
 # The Result as Promised !!
 
-![](/static/post-images/full-height-gatsby/result-as-promised.gif)
+<BlogImage
+  client:load
+  extendWidth
+  alt="Result as promised"
+  caption="Result as promised"
+  src="/static/post-images/full-height-gatsby/result-as-promised.gif"
+/>
 
 The footer is now pushed down by the content.
 

@@ -1,18 +1,17 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
 
 interface BlogImageProps {
   src: string;
   alt: string;
   caption?: string;
-  fullWidth?: boolean;
+  extendWidth?: boolean;
 }
 
 export const BlogImage = ({
   src,
   alt,
   caption,
-  fullWidth = false,
+  extendWidth = false,
 }: BlogImageProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -44,20 +43,28 @@ export const BlogImage = ({
 
   return (
     <>
-      {/* Main image container */}
-      <figure className={`my-4 ${fullWidth ? "w-full" : "mx-auto max-w-2xl"}`}>
-        <div
-          className="cursor-pointer overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-lg"
-          onClick={openModal}
+      {/* Container that breaks out of article width constraints */}
+      <div
+        className={
+          extendWidth ? "relative left-1/2 right-1/2 -mx-[50vw] w-screen" : ""
+        }
+      >
+        <figure
+          className={`my-4 ${extendWidth ? "mx-auto max-w-screen-md px-4" : "mx-auto max-w-2xl"}`}
         >
-          <img src={src} alt={alt} className="h-auto w-full" loading="lazy" />
-        </div>
-        {caption && (
-          <figcaption className="mt-2 text-center text-sm italic text-gray-600">
-            {caption}
-          </figcaption>
-        )}
-      </figure>
+          <div
+            className="cursor-pointer overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-lg"
+            onClick={openModal}
+          >
+            <img src={src} alt={alt} className="h-auto w-full" loading="lazy" />
+          </div>
+          {caption && (
+            <figcaption className="mt-2 text-center text-sm italic text-gray-600 dark:text-gray-400">
+              {caption}
+            </figcaption>
+          )}
+        </figure>
+      </div>
 
       {/* Modal overlay */}
       {isModalOpen && (
@@ -65,16 +72,7 @@ export const BlogImage = ({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
           onClick={closeModal}
         >
-          <div className="relative max-h-screen w-full max-w-4xl">
-            {/* Close button */}
-            <button
-              className="absolute -right-1 -top-4 z-10 bg-transparent text-white transition-colors duration-300 hover:text-gray-400"
-              onClick={closeModal}
-              aria-label="Close modal"
-            >
-              <X className="h-8 w-8" />
-            </button>
-
+          <div className="max-h-screen w-full max-w-4xl">
             {/* Modal content */}
             <div
               className="flex h-full w-full items-center justify-center"

@@ -11,6 +11,8 @@ tags:
   - typescript
 ---
 
+import { BlogImage } from "../../components/blog";
+
 ## Preface
 
 > Coming from _Laravel_, which has a myriad of built-in features I started to resent shifting to NodeJS. Setting up error handling, logging, dependency injection, etc. was not what I had in mind. Thankfully I found NestJS, with its out-of-the-box architecture and great documentation I started feeling at home again.
@@ -187,7 +189,12 @@ The last step is to inject the _user service_ in our _user controller_. The cont
 
 ## Folder Structure
 
-![](/static/post-images/getting-started-nestjs-sequelize/sequelize-db-folder-structure.png)
+<BlogImage
+  client:load
+  alt="Folder structure"
+  caption="Folder structure"
+  src="/static/post-images/getting-started-nestjs-sequelize/sequelize-db-folder-structure.png"
+/>
 
 If you’re curious, this is how my folder structure looks like.
 
