@@ -17,6 +17,8 @@ categories:
   - blog-post
 ---
 
+import { BlogImage } from "../../components/blog";
+
 > This is a highly opinionated blog post. Don’t catch on fire if you don’t agree. You have been Warned!
 
 If you’re a developer of any sort, chances are you’ve heard of the term “Serverless” and know what it means. That’s why I’m not going to explain what serverless architecture is, rather I’m going to talk about some tools you can use to get started with serverless and create production ready APIs.
@@ -60,7 +62,13 @@ Now, it’s easy to get confused between Serverless Architecture and Framework. 
 
 In our particular case serverless manages the following resources;
 
-![Serverless Framework converting code into product](/static/post-images/serverless-api-on-the-go/serverless-flow-diagram.png)
+<BlogImage
+  client:load
+  fullWidth={true}
+  alt="Serverless Framework converting code into product"
+  src="/static/post-images/serverless-api-on-the-go/serverless-flow-diagram.png"
+/>
+{/* ![Serverless Framework converting code into product](/static/post-images/serverless-api-on-the-go/serverless-flow-diagram.png) */}
 
 ### Step 1
 
@@ -190,7 +198,7 @@ I’ll expand further on “functions”
 - **api** → name of the lambda function
 - **handler** → entry point of the lambda function. Its declared as file.function
 - **events** → Lambda functions can be triggered on different types of events we are using HTTP requests
-- **path** → a proxy resource with a greedy path variable of {proxy+}
+- **path** → a proxy resource with a greedy path variable of `{proxy+}`
 - **method** → all method types
 - **cors** → enable CORS
 
