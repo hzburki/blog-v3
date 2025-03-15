@@ -1,0 +1,116 @@
+---
+title: "Domain Migration: Moving from AWS to Cloudflare"
+description: "Learn how to transfer your domain from AWS to Cloudflare and deploy your Astro site with step-by-step instructions that save time and prevent common pitfalls."
+image: "/static/feature-images/aws-cloudflare-migration-feature-image.jpeg"
+date: "Mar 15 2025"
+status: "draft"
+tags:
+  - aws
+  - cloudflare
+  - domain-management
+  - astro
+  - web-hosting
+  - cloud-services
+---
+
+import { Callout, Accordion } from "../../components/blog";
+
+## Why I Moved My Domain from AWS to Cloudflare
+
+I recently decided to transfer my domain from AWS to Cloudflare to test their services and explore features like DDoS protection. As a developer who manages several personal projects, I'm always looking for the most efficient and cost-effective solutions for domain management and hosting.
+
+In this guide, I'll walk you through the exact process I used to transfer my domain from AWS to Cloudflare and deploy my Astro-built blog. By following these steps, you'll avoid the confusion and technical hiccups I encountered along the way.
+
+## Domain Transfer Process: AWS to Cloudflare
+
+The domain transfer process involves steps on both the AWS and Cloudflare sides. Let's break it down into manageable steps.
+
+### Preparing Your Domain in AWS
+
+1. Log in to your AWS account and navigate to Route53.
+2. Locate your domain in the "Registered domains" section.
+3. Disable the Transfer Lock feature (look for "Transfer Lock: On" and change it to Off).
+4. Wait for the transfer lock to deactivate completely (this takes a few seconds).
+5. Click on the "Transfer out" dropdown menu and select "Transfer to another registrar."
+6. Note down the Authorization Code provided – you'll need this for Cloudflare.
+7. Remove the WHOIS privacy protection (while not strictly necessary, this can prevent complications with some registrars).
+
+<Callout type="info">
+  AWS regularly updates their UI, so specific button locations may change. Focus
+  on finding these functions rather than looking for exact visual matches with
+  this guide.
+</Callout>
+
+### Initiating the Transfer in Cloudflare
+
+1. Log in to your Cloudflare account and navigate to "Domain Registration."
+2. Go to the "Transfer domain" section.
+3. If you don't see the option to add a domain, try hard refreshing the page with <kbd>CMD</kbd> + <kbd>SHIFT</kbd> + <kbd>R</kbd> (or <kbd>CTRL</kbd> + <kbd>SHIFT</kbd> + <kbd>R</kbd> on Windows).
+4. Enter your domain name when prompted.
+5. Select "Quick Scan for DNS records" when asked how to handle DNS records.
+6. Choose your plan (the Free plan works for most personal projects).
+7. Continue to the activation page, where Cloudflare will provide instructions for nameserver changes.
+
+<Callout type="success">
+  If you encounter issues with existing CNAME records showing up, you may need
+  to delete the domain from Cloudflare and start again, ensuring all previous
+  records are cleared.
+</Callout>
+
+### Completing the Transfer
+
+1. Navigate to "Transfer a domain you own" option in Cloudflare.
+2. Enter your domain and review the transfer fee that Cloudflare will charge.
+3. Enter the authorization code you received from AWS.
+4. Verify your contact details, address, and payment information.
+5. Click "Confirm and Finalize Transfer" to complete the process.
+6. Watch for emails from both AWS and Cloudflare regarding the transfer.
+7. Respond to the AWS email (usually arrives within minutes) to approve and expedite the transfer.
+
+<Callout type="danger">
+  Without your explicit approval, domain transfers can take up to 5 days.
+  Responding to the AWS confirmation email speeds up the process significantly.
+</Callout>
+
+## Deploying an Astro Site to Cloudflare Pages
+
+While waiting for the domain transfer to complete, you can go ahead and deploy your website to Cloudflare Pages.
+
+### Connecting Your GitHub Repository
+
+1. Navigate to the "Workers & Pages" tab in your Cloudflare dashboard.
+2. Select the "Pages" tab.
+3. Click on "Connect to Git" and authorize GitHub when prompted.
+4. Select the repository containing your Astro project.
+5. Choose "Astro" as the Framework preset to apply recommended build settings.
+6. Click "Deploy" to start the deployment process.
+
+### Setting Up Your Custom Domain
+
+1. Once deployment completes, go to the "Custom domains" tab.
+2. Add the domain you're transferring to Cloudflare.
+3. Note the CNAME value provided by Cloudflare.
+4. Navigate to "Account Home" from the side menu and select your domain.
+5. Update the DNS records by adding the CNAME with the values provided.
+6. Return to the Pages section, find the custom domain tab, and click "Activate domain."
+7. Wait for the domain to activate (usually a few minutes, though Cloudflare says it may take up to 48 hours).
+
+<Callout type="info">
+  If your site isn't immediately accessible after domain activation, try
+  accessing it in an incognito window or a different browser to rule out caching
+  issues.
+</Callout>
+
+<Accordion client:load heading="Key Takeaways from This Migration">
+
+1. Domain transfers require disabling security features on the sending side before initiating the transfer.
+2. Authorization codes are essential for domain transfers and are provided by your current registrar.
+3. Responding quickly to confirmation emails significantly speeds up the transfer process.
+4. DNS record conflicts can occur if you've previously attempted to add your domain to Cloudflare.
+5. Browser caching can make it appear that domain transfers or DNS changes haven't taken effect when they actually have.
+
+</Accordion>
+
+This entire process took me less than a day to complete, though your experience may vary depending on how quickly your registrar processes the transfer. The deployment to Cloudflare Pages was particularly smooth thanks to their built-in support for Astro projects.
+
+Have you migrated domains between providers before? What challenges did you encounter that weren't covered in this guide?

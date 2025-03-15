@@ -79,5 +79,14 @@
     mark {
       @apply dark:bg-yellow-500/50 dark:text-white;
     }
+    aside {
+      background-color: #f0f4ff;  /* Light blue background */
+      border-left: 4px solid #0070f3;  /* Blue left border */
+      padding: 16px;  /* Padding around the content */
+      margin: 16px 0;  /* Margin above and below */
+      border-radius: 8px;  /* Rounded corners */
+      font-size: 1rem;  /* Font size */
+      color: #333;  /* Text color */
+    }
   }
 }

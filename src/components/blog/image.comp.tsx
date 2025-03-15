@@ -7,12 +7,12 @@ interface BlogImageProps {
   extendWidth?: boolean;
 }
 
-export const BlogImage = ({
+export const BlogImage: React.FC<BlogImageProps> = ({
   src,
   alt,
   caption,
   extendWidth = false,
-}: BlogImageProps) => {
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
