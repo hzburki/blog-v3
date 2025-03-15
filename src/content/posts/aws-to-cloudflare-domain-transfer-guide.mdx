@@ -35,7 +35,7 @@ The domain transfer process involves steps on both the AWS and Cloudflare sides.
 6. Note down the Authorization Code provided – you'll need this for Cloudflare.
 7. Remove the WHOIS privacy protection (while not strictly necessary, this can prevent complications with some registrars).
 
-<Callout type="info">
+<Callout client:load type="info">
   AWS regularly updates their UI, so specific button locations may change. Focus
   on finding these functions rather than looking for exact visual matches with
   this guide.
@@ -51,7 +51,7 @@ The domain transfer process involves steps on both the AWS and Cloudflare sides.
 6. Choose your plan (the Free plan works for most personal projects).
 7. Continue to the activation page, where Cloudflare will provide instructions for nameserver changes.
 
-<Callout type="success">
+<Callout client:load type="success">
   If you encounter issues with existing CNAME records showing up, you may need
   to delete the domain from Cloudflare and start again, ensuring all previous
   records are cleared.
@@ -67,7 +67,7 @@ The domain transfer process involves steps on both the AWS and Cloudflare sides.
 6. Watch for emails from both AWS and Cloudflare regarding the transfer.
 7. Respond to the AWS email (usually arrives within minutes) to approve and expedite the transfer.
 
-<Callout type="danger">
+<Callout client:load type="danger">
   Without your explicit approval, domain transfers can take up to 5 days.
   Responding to the AWS confirmation email speeds up the process significantly.
 </Callout>
@@ -95,7 +95,7 @@ While waiting for the domain transfer to complete, you can go ahead and deploy y
 6. Return to the Pages section, find the custom domain tab, and click "Activate domain."
 7. Wait for the domain to activate (usually a few minutes, though Cloudflare says it may take up to 48 hours).
 
-<Callout type="info">
+<Callout client:load type="info">
   If your site isn't immediately accessible after domain activation, try
   accessing it in an incognito window or a different browser to rule out caching
   issues.

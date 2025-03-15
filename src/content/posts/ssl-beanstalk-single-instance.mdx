@@ -13,7 +13,7 @@ tags:
   - certbot
 ---
 
-import { BlogImage } from "../../components/blog";
+import { Image } from "../../components/blog";
 
 SSL secures data transfer between the client and the server-side. Not only that, it also increases your website’s Google ranking, so it’s the say that SSL certificates are a _MUST_ have when building applications.
 
@@ -31,7 +31,7 @@ Well, that’s mildly annoying 😒 but don’t worry we can still provision a f
 
 The first step is to say goodbye to your load balancer. Convert your instance type to `single instance` from “load balanced.” You can do this from the _Capacity_ tab inside _Configurations_. Just choose single instance in the environment type and that’s it.
 
-<BlogImage
+<Image
   client:load
   extendWidth
   alt="Elastic Beanstalk Configuration Tab"
@@ -147,7 +147,7 @@ Now all you have to do is deploy your code to Elastic Beanstalk. Make sure that 
 
 > Aaand Voilà!!! **A+** rating for your very own, free of cost SSL Certificate. You can test your SSL certificate at [ssllabs.com](https://www.ssllabs.com/ssltest/).
 
-<BlogImage
+<Image
   client:load
   extendWidth
   alt="SSL Certificate Results"

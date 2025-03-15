@@ -13,13 +13,13 @@ tags:
   - css
 ---
 
-import { BlogImage } from "../../components/blog";
+import { Image } from "../../components/blog";
 
 # Use Case
 
 A simple UI containing a header, main and footer. The footer should stick to the bottom if content above it (main) does not fill the whole view and get pushed down if the content (main) exceeds the view height.
 
-<BlogImage
+<Image
   client:load
   extendWidth
   alt="What we have"
@@ -27,7 +27,7 @@ A simple UI containing a header, main and footer. The footer should stick to the
   src="/static/post-images/full-height-gatsby/what-we-have.png"
 />
 
-<BlogImage
+<Image
   client:load
   extendWidth
   alt="What we want"
@@ -43,7 +43,7 @@ Gatsby uses [@reach/router](https://github.com/reach/router) which wraps the 
 
 **But!!! 😮😮😮**
 
-<BlogImage
+<Image
   client:load
   extendWidth
   alt="Additional div highlighted"
@@ -122,7 +122,7 @@ import "./src/styles/global.css";
 
 # The Result as Promised !!
 
-<BlogImage
+<Image
   client:load
   extendWidth
   alt="Result as promised"

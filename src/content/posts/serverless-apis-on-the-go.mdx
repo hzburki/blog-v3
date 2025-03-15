@@ -17,7 +17,7 @@ categories:
   - blog-post
 ---
 
-import { BlogImage } from "../../components/blog";
+import { Image } from "../../components/blog";
 
 > This is a highly opinionated blog post. Don’t catch on fire if you don’t agree. You have been Warned!
 
@@ -62,7 +62,7 @@ Now, it’s easy to get confused between Serverless Architecture and Framework. 
 
 In our particular case serverless manages the following resources;
 
-<BlogImage
+<Image
   extendWidth
   client:load
   caption="AWS Serverless Architecture Diagram"
@@ -324,7 +324,7 @@ serverless deploy --env dev --stage qa
 - **--env** → enable using specific env variables only
 - **–-stage** → enables deploying to specific environment only
 
-<BlogImage
+<Image
   extendWidth
   client:load
   alt="deploy your code with serverless"
@@ -344,7 +344,7 @@ The above command removes all AWS resources used in your application. Adding “
 
 Below are the metrics as shown by CloudWatch in the AWS console, after invoking each lambda 500 times via Postman.
 
-<BlogImage
+<Image
   extendWidth
   client:load
   alt="aws lambda results"

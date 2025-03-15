@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-interface BlogImageProps {
+interface ImageProps {
   src: string;
   alt: string;
   caption?: string;
   extendWidth?: boolean;
 }
 
-export const BlogImage: React.FC<BlogImageProps> = ({
+export const Image: React.FC<ImageProps> = ({
   src,
   alt,
   caption,

@@ -1,18 +1,21 @@
 ---
 import { getCollection } from "astro:content";
+
+// Intenal Components
 import BlogCard from "../../components/blog-card.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
+import { filterPosts, isLocalEnv, sortPosts } from "../../lib";
 
 const collection = await getCollection("posts");
 
-const filteredPosts = collection.filter(
-  (post) => post.data.status === "published",
-);
-
-const posts = filteredPosts.sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+let posts;
+if (isLocalEnv(Astro.url.hostname)) {
+  posts = sortPosts(collection);
+} else {
+  const filteredPosts = filterPosts(collection);
+  posts = sortPosts(filteredPosts);
+}
 ---
 
 <Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
