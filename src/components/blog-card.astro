@@ -1,20 +1,16 @@
 ---
-import { formatDate, isLocalEnv } from "../lib";
+import { formatDate } from "../lib";
 
 const { post } = Astro.props;
 
-export const showDraft = (isLocal: boolean, status: string) =>
-  isLocal && status === "draft";
+// Show draft
+const showDraft = import.meta.env.DEV && post.data.status === "draft";
 ---
 
 <a href={`/posts/${post.slug}`} class="group flex justify-between gap-3">
   <span class="group-hover:underline">
     {post.data.title}
-    {
-      showDraft(isLocalEnv(Astro.url.hostname), post.data.status) && (
-        <span class="text-xs text-zinc-600 underline">(Draft)</span>
-      )
-    }
+    {showDraft && <span class="text-xs font-light text-blue-500">(Draft)</span>}
   </span>
   <span class="text-nowrap text-zinc-500">
     {formatDate(post.data.date)}

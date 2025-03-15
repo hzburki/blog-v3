@@ -2,11 +2,14 @@
 import TagBadge from "../../components/tag-badge.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
-import { filterPosts } from "../../lib";
 
+const isDev = import.meta.env.DEV;
 const posts = await Astro.glob("../../content/posts/*.mdx");
 
-const publishedPosts = filterPosts(posts);
+// Show only published posts in production
+const publishedPosts = isDev
+  ? posts
+  : posts.filter((post) => post.frontmatter.status === "published");
 
 // Extract all tags from published posts
 const allTags = publishedPosts.flatMap((post) => post.frontmatter.tags || []);

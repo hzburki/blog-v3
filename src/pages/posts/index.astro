@@ -5,17 +5,22 @@ import { getCollection } from "astro:content";
 import BlogCard from "../../components/blog-card.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
-import { filterPosts, isLocalEnv, sortPosts } from "../../lib";
 
+const isDev = import.meta.env.DEV;
 const collection = await getCollection("posts");
 
-let posts;
-if (isLocalEnv(Astro.url.hostname)) {
-  posts = sortPosts(collection);
-} else {
-  const filteredPosts = filterPosts(collection);
-  posts = sortPosts(filteredPosts);
+// Show only published posts in production
+let filteredPosts = collection;
+if (!isDev) {
+  filteredPosts = collection.filter((post) => post.data.status === "published");
 }
+
+// Sort posts by date
+const sortedPosts = filteredPosts.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const posts = sortedPosts;
 ---
 
 <Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
