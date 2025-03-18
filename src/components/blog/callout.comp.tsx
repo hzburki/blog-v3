@@ -1,4 +1,5 @@
 import React from "react";
+import { CircleX, CircleCheck, Info } from "lucide-react";
 
 interface CalloutProps {
   type: "danger" | "success" | "info";
@@ -23,7 +24,13 @@ export const Callout: React.FC<CalloutProps> = ({ type, children }) => {
       className={`my-4 flex flex-row rounded-md border-l-4 p-4 shadow-sm ${getClassName()}`}
     >
       <span className="flex items-center pr-4">
-        {type === "info" ? "ℹ️" : type === "success" ? "✅" : "⛔"}
+        {type === "info" ? (
+          <Info />
+        ) : type === "success" ? (
+          <CircleCheck />
+        ) : (
+          <CircleX />
+        )}
       </span>
       {children}
     </div>

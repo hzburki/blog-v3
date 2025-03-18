@@ -15,18 +15,22 @@ tags:
 
 import { Callout } from "../../components/blog";
 
-I decided to transfer my domain from AWS to Cloudflare to test their services. Here's my experience transferring the domain and deploying my Astro blog.
+I have used vercel and netlify to host my websites in the past. Both are great services.
+But I had never used Cloudflare before just read a lot about it on the internet.
+So when I decided to re-create my blog, I thought it would be a good opportunity to try Cloudflare.
+
+This is my experience and the steps I followed to transfer my domain from AWS to Cloudflare and deploy my Astro blog.
 
 ## Domain Transfer Process: AWS to Cloudflare
 
 ### Step 1: Prepare Your Domain in AWS
 
-1. Log into your AWS account and navigate to Route53
-2. Find your domain in the "Registered domains" section
-3. Disable the "Transfer Lock" feature through the "Actions" dropdown (may take a few seconds)
-4. Select "Transfer to another registrar" from the "Transfer out" dropdown
-5. Save the Authorization Code. You will need it later.
-6. Remove WHOIS privacy protection (optional but recommended to avoid potential transfer issues)
+1. Logged into AWS account and opened Route53.
+2. Domains are listed in the "Registered domains" section.
+3. Disabled the "Transfer Lock" feature through the "Actions" dropdown (this took about a minute for me).
+4. Selected "Transfer to another registrar" from the "Transfer out" dropdown.
+5. Saved the Authorization Code. This is needed confirm you own the domain when transferring it to another registrar.
+6. Removed WHOIS privacy protection (optional but recommended to avoid potential transfer issues).
 
 <Callout client:load type="info">
   AWS will definitely update their UI over time, so I am not sharing screenshots
@@ -36,51 +40,60 @@ I decided to transfer my domain from AWS to Cloudflare to test their services. H
 
 ### Step 2: Initiate Transfer in Cloudflare
 
-1. Log into Cloudflare and go to "Domain Registration"
-2. If transfer options aren't visible, try hard refreshing (<kbd>⌘</kbd> + <kbd>SHIFT</kbd> + <kbd>R</kbd> for Macs or <kbd>Ctrl</kbd> + <kbd>SHIFT</kbd> + <kbd>R</kbd> for Windows)
-3. Select "Transfer a domain you own" and enter your domain
-4. Choose "Quick Scan for DNS records". This will scan your domain for existing records and provide a list of records to transfer.
-5. Select your plan and remove any conflicting DNS records
-6. Continue to activation
+1. Logged into Cloudflare and went to "Domain Registration".
+
+<Callout client:load type="danger">
+  For me the transfer options wasn't visible, so I just hard refreshed the page.
+</Callout>
+
+2. Selected "Transfer a domain you own" and entered my domain.
+3. Chose "Quick Scan for DNS records". This will scan your domain for existing records and provide a list of records to transfer.
+4. Selected my plan and removed any conflicting DNS records.
+5. Continued to activation.
 
 ### Step 3: Complete Transfer and Wait
 
-1. Update nameservers and disable DNSSEC if required (this was already disabled for me in the AWS Dashboard)
-2. Enter the AWS authorization code
-3. Verify your contact details and payment information
-4. Confirm and finalize the transfer
-5. Watch for the AWS confirmation email (usually arrives within minutes)
-6. Approve the transfer immediately to expedite the process
-7. Without approval, transfers can take up to 5 days
+1. Updated nameservers. There was an option to disable DNSSEC but it was already disabled for me in the AWS Dashboard.
+2. Entered the AWS authorization code.
+3. Verified my contact details and payment information.
+4. Confirm and finalize the transfer.
+5. Waited for the AWS confirmation email (usually arrives within minutes).
+
+<Callout client:load type="info">
+  Approve the transfer immediately to expedite the process Without approval,
+  transfers can take up to 5 days.
+</Callout>
 
 ## Deploying an Astro Blog to Cloudflare Pages
 
-While waiting for the domain transfer to complete, you can get a head start on deploying your Astro blog:
+While waiting for the domain transfer to complete, I decided to deploy my Astro blog.
 
 ### Deploy and Connect
 
-1. Go to "Workers & Pages" → "Pages" in Cloudflare
-2. Connect to GitHub and select your Astro repository
-3. Choose "Astro" from Framework presets (this configures build settings)
-4. Click "Deploy" to start the build process
-5. After deployment, go to "Custom domains" and add your domain
-6. Add the provided CNAME value to your DNS records
-7. Return to Pages and click "Activate domain"
+1. Went to "Workers & Pages" → "Pages" in Cloudflare.
+2. Connected to GitHub and selected my Astro repository.
+3. Chose "Astro" from Framework presets (this configures build settings).
+4. Clicked "Deploy" to start the build process.
+5. After deployment, went to "Custom domains" and added my domain.
+6. Added the provided CNAME value to my DNS records (on Cloudflare, not AWS).
+7. Returned to Pages and clicked "Activate domain".
 
 <Callout client:load type="info">
   Even if your domain hasn't fully transferred yet, you can still set up the
-  Pages configuration. The connection will activate once the transfer completes.
+  Pages configuration. The domain will activate itself once the transfer
+  completes.
 </Callout>
 
 ## Verification and Next Steps
 
-Domain activation usually happens quickly but can take up to 48 hours. If your site doesn't appear, try checking in a different browser to avoid cache issues.
+Domain activation usually happens quickly but can take up to 48 hours. If your site doesn't appear,
+try checking in a different browser to avoid cache issues.
 
 <Callout client:load type="success">
   Success! While my main browser showed caching issues, testing in a fresh
   browser session confirmed both the domain transfer and deployment worked.
 </Callout>
 
-Now that everything is on Cloudflare, I'll explore their DDoS protection, CDN performance, and security features. This migration gives me a perfect testing ground for Cloudflare's ecosystem while maintaining my blog.
+Now that everything is on Cloudflare, I'll explore their DDoS protection, CDN performance, and security features.
 
-Have you tried Cloudflare? Which features do you find most useful?
+The whole process took me about 30 minutes. Might have been less if I didn't have to google and read some docs.
