@@ -1,0 +1,158 @@
+---
+title: "Setting up Coolify on AWS EC2 for Development"
+description: "Set up Coolify on AWS EC2 for development: instance, SSH, GitHub deployment, domain, SSL, swap."
+image: ""
+date: April 30, 2025
+status: "published"
+tags:
+  - Coolify
+  - AWS
+  - EC2
+  - DevOps
+---
+
+import { Callout } from "../../components/blog";
+
+# Setting Up Coolify on AWS EC2 for Development
+
+This guide will walk you through setting up Coolify on an EC2 instance. You'll learn how to:
+
+- Create an EC2 Instance ✅
+- SSH and Install Coolify ✅
+- Deploy Code from GitHub ✅
+- Connect our Domain ✅
+- Enable SSL Certificate ✅
+- Add Swap Memory for Builds ✅
+
+Let’s get started! 👨‍💻
+
+## Creating the EC2 Instance
+
+First, we need to create the EC2 instance that will host Coolify. You can easily do this using the AWS EC2 console.
+
+I used these settings when creating my instance:
+
+- **OS Image:** Ubuntu (latest version)
+- **Architecture:** 64-bit (Arm)
+- **Instance Type:** t4g.medium
+- **Key Pair:** Create new with the same name as the instance. (delete this later when the instance is deleted)
+- **Security Group:** Create new and check the **Allow HTTP** and **Allow HTTPS** checkboxes. Allow traffic **“Anywhere”**.
+
+<Callout client:load type="info">
+  Delete the key pair and security groups when this instance is deleted.
+</Callout>
+
+- **Storage:** Increase the size of the root EBS volume to **35 GB**. This is the minimum required by Coolify.
+
+Launch the instance with these settings. It will take a few moments for the instance to initialize before its ready for use.
+
+## SSH into Instance
+
+You can use the key pair you created to SSH into the instance from your computer. However, I find it easier to use the AWS EC2 console. Simply click on the **“Instance ID”** in the EC2 table and then click the **“Connect”** button. Just continue with the default options, and AWS will open a terminal window in your browser. I find this very convenient! 😃
+
+## Install Coolify
+
+Next, we'll install Coolify. Follow the instructions on the official Coolify installation page. You only need to run one command:
+
+```bash
+curl -fsSL [https://cdn.coollabs.io/coolify/install.sh](https://cdn.coollabs.io/coolify/install.sh) | sudo bash
+```
+
+Enjoy the dad joke from the CLI while you wait for the installation to finish! 😝
+
+## Setting up Coolify
+
+When you open the IP address on port `8000` for the first time, you'll see the Coolify registration page. Enter your email and password and save them. You'll use these to log in later.
+
+Next, let's start the onboarding process. Choose the **“Localhost”** option since we want to host our APIs and applications on this same instance. After this, I skipped the rest of the onboarding. We'll set up our application/API manually.
+
+On the dashboard, there might be a project already created. You can either delete it and create a new one or simply edit the existing one and change its name. I changed the project name to match the project I'm setting up this Coolify instance for.
+
+## Deploy your Code
+
+Now, let's deploy our API. It's built with NestJS. We'll add a **“Resource”** to our project. The first step is to create a GitHub app within Coolify. This allows Coolify to pull the latest code from our GitHub repository and deploy it, instead of you manually uploading the code. Later, we can also set up deployment hooks that trigger deployments on every pull request merge.
+
+The process of creating the GitHub app is quite straightforward. Coolify guides you through each step. One important step is selecting the specific repositories you want to give Coolify access to. It's best practice not to grant access to all your repositories. The automatic app creation requires your GitHub **“Organization Name”** and someone to authenticate their GitHub account. That's all there is to it\!
+
+<Callout client:load type="info">
+  Only the Haseeb Burki has the permissions required to create the GitHub app
+  and authorize repositories inside it.
+</Callout>
+
+Once the GitHub app is created, go back to your project and add a new **“Resource”**. Select the GitHub app, and then choose the repository you want to deploy. This will open the **“Configuration”** page.
+
+Here, we need to do two things:
+
+1.  Add environment variables for your API.
+2.  Deploy the code from your selected branch by clicking the **“Deploy”** button in the top right corner.
+
+Coolify will show the deployment logs, and then provide an HTTP domain where you can access your API.
+
+Your code is now deployed and ready to use\! You can stop here, or continue reading if you want to add custom domains and an SSL certificate to your Coolify instance and the deployed API.
+
+## Adding the Domain
+
+Let's connect a domain to our Coolify instance. This way, we won't need to remember the IP address and port 8000 every time we want to access Coolify. We'll also attach the domain to our deployed API with an SSL certificate.
+
+### Connect to Route53
+
+Navigate to Route53 and select the hosted zone for the domain you want to use. We're going to create two subdomains: one for the entire Coolify instance and another for the API hosted on it.
+
+1.  Create a new record with the **A** type. Point it to the IP address of your EC2 instance. This will be the subdomain for your Coolify instance (e.g., project.ideamappers.com).
+2.  Create another new record with the **CNAME** type. Point it to the subdomain you created in the previous step (e.g., api.project.ideamappers.com pointing to project.ideamappers.com).
+
+To connect the domain to the Coolify instance itself:
+
+1.  Go back to the **Coolify Dashboard → Settings**.
+2.  Add the subdomain you created for the instance (e.g., project.ideamappers.com) in the **“Instance Domain”** field.
+3.  Disable the **“DNS Validation”** checkbox.
+4.  Don't forget to click **“Save”**.
+
+<Callout client:load type="info">
+  Scroll down on the same page and uncheck the **“Auto Update Enabled”**
+  checkbox. Coolify is still in beta and there are a lot breaking changes
+  happening.
+</Callout>
+
+Now, let's connect our domain to the App/API hosted on our Coolify server.
+
+1.  Go to **Servers → Localhost → [Your Project]**. You should be on the **General** page.
+2.  Add your apex domain in the **“Wildcard Domain”** field. For example, `https://ideamappers.com`.
+
+<Callout client:load type="info">
+  You need to add the **apex domain**, not any subdomain. You need to add
+  `https://` before the domain.
+</Callout>
+
+Once this is done, restart the proxy OR stop and start the proxy. At this point, your Coolify instance should be running with an SSL certificate.
+
+Finally, go back to your project (App/API) and in the **Configurations** tab, update the **“Domain”** field with the subdomain you want for your app, including the `https://` prefix (e.g., `https://api.project.ideamappers.com`). Save the changes and redeploy the app.
+
+Open your browser and check out your new subdomains\! So far, we've set up `https://project.ideamappers.com` for the Coolify instance and `https://api.project.ideamappers.com` for the API.
+
+## Closing the Port 8000
+
+Earlier in the guide, we opened port `8000` in the security group to access the Coolify dashboard via the IP address. Now that we have our domain connected, we don't need this port open anymore. Let's close it for security:
+
+1.  Go to the **EC2 Console**.
+2.  Select your **Instance**.
+3.  Click on the **“Security”** tab.
+4.  Click on your **Security Group** (the link).
+5.  Click **“Edit inbound rules”**.
+6.  Find the rule for **TCP** on port **8000** and click the **“Delete”** button next to it.
+7.  Click **“Save rules”**.
+
+## Extra Steps
+
+Coolify uses Caddy and Traefik as its web servers, not NGINX or Apache. Traefik is enabled by default, but you can switch to Caddy. Check out this YouTube video if you want to do this or explore Coolify in more detail.
+
+## Increase Swap Memory
+
+We're using this Coolify instance to both build and host our API. Building for production can consume significant server resources. Since we're using a development server, resources are limited.
+
+This can sometimes lead to server crashes during new deployments. There are two ways to address this:
+
+1.  **The proper solution:** Use a dedicated service like AWS CodeBuild or GitHub Actions.
+2.  **The quick solution:** Increase the instance's swap memory. This allows the server to use some disk space as virtual memory to handle the extra load during builds.
+
+For our development purposes, the quick solution should be sufficient for now. Follow this article on how to increase the swap memory of your instance. You'll need to SSH into the instance and perform these steps every time you create a new instance or rebuild an existing one.
