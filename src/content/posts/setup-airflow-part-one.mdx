@@ -1,0 +1,211 @@
+---
+title: "Setting up airflow workflow with docker and git for local development"
+description: ""
+image: ""
+date: September 18, 2025
+status: "draft"
+tags:
+  - Airflow
+  - Docker
+  - Python
+  - Localhost
+  - DevOps
+---
+
+import { Image } from "../../components/blog";
+
+This guide will walk you through setting up an airflow workflow with docker and git for local development. In later parts, we will provision
+resources on AWS and setup a fully working production grade ETL pipeline.
+
+## Prerequisites
+
+Before you start this guide, you need working knowledge of docker, docker compose, python and git. You also need to have docker desktop
+installed on your machine. This guide uses Mac for development environment, so you might need to adjust some commands based on your
+operating system.
+
+> I am using python `3.12.1` for this guide.
+
+## Setting up Airflow
+
+Luckily for us Airflow provides an official docker compose file to get us started. You can download the file using the following command:
+
+```bash
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.0.6/docker-compose.yaml'
+```
+
+> We are using Airflow 3.0.6 for this guide. You can check the latest version on [airflow.apache.org](airflow.apache.org).
+
+The docker compose file contains alot of services we need including;
+
+- **airflow-scheduler**: Oversees all tasks and DAGs, initiating task instances when their dependencies have been satisfied
+- **airflow-dag-processor**: Parses the DAG files
+- **airflow-api-server**: Provides the web UI for airflow
+- **airflow-worker**: Executes tasks assigned by the scheduler
+- **airflow-triggerer**: Manages an event loop for tasks that can be deferred
+- **airflow-init**: This is the initialization service
+- **postgres**: Serves as the metadata database
+- **redis**: Acts as a message broker, relaying communications between scheduler and worker
+- **flower**: Provides a web UI for monitoring and managing airflow
+
+Airflow requires some directories to hold code for DAGs and plugins. These have a fixed name by convention and are already mounted in
+the docker compose file. This means when you create them on your local machine, their content will be automatically synced into the
+airflow container.
+
+- **dags**: Contains DAG files
+- **logs**: Contains logs for airflow
+- **plugins**: Contains plugin files
+- **config**: Contains configuration files
+
+> By default git will ignore empty directories when pushing to the code. You can bypass this by adding a `.gitkeep` file inside the
+> empty directories so they are included in the git repo.
+
+At this point we are ready to start the airflow services but before we do that, let's create a file essential files for the repo to be
+acutally functional. Remember we are setting up the repo for proper development and not just for learning. Create an `.env` file in the
+root of the repo. This will be used later on. Run `git init` to initialize the repo. Personally I like to create a `settings.json` file
+for my vscode settings and commit it to git. This way everyone working on the project will have the same settings. Later we will also
+setup packages like `ruff` and `black` with pre-commit hooks to keep the codebase neat and clean.
+
+## Starting the Airflow services
+
+> Before running any of the docker compose commands, make sure you have docker desktop running.
+
+Airflow needs to have a user id to run as. This is because the airflow container runs as a non-root user. We can set this in the `.env`
+file. Add the following variable to the `.env` file:
+
+```bash
+AIRFLOW_UID=50000
+```
+
+You can also initialize the airflow config file. We will not do it in this guide. We are going to use the default config settings. In case
+you want to initialize the config file, run.
+
+```bash
+docker compose run airflow-cli airflow config list
+```
+
+This will seed the `airflow.cfg` file with the default values in the `config` directory.
+
+Now let's initialize the metadata database. The metadata base is where airflow stores all the information it tracks. Run the following
+docker compose command:
+
+```bash
+docker compose up airflow-init
+```
+
+After the command completes, you should see a message with the exit code `0`. This means the initialization was successful. It will create
+an username and password of `airflow` for the admin user. You can use these credentials to login to the airflow web UI on you local machine.
+
+At this point running `docker ps` should show that the `postgres` and `redis` services are up and running. We are going to use both of these
+in airflow. Postgres is used as the metadata database and redis is used as the message broker.
+
+You can now start the airflow services by running the following command:
+
+```bash
+docker compose up -d
+```
+
+This will start the airflow services in the background. The `-d` flag ensures the services run in the background. When successful, you should
+see all the airflow services running. You should see something like this:
+
+```bash
+docker compose up -d
+[+] Running 8/8
+ ✔ Container lua-airflow-pipeline-postgres-1               Healthy                                                                                                                                                            14.1s
+ ✔ Container lua-airflow-pipeline-redis-1                  Healthy                                                                                                                                                            14.1s
+ ✔ Container lua-airflow-pipeline-airflow-dag-processor-1  Started                                                                                                                                                            13.4s
+ ✔ Container lua-airflow-pipeline-airflow-triggerer-1      Started                                                                                                                                                            13.6s
+ ✔ Container lua-airflow-pipeline-airflow-scheduler-1      Started                                                                                                                                                            13.5s
+ ✔ Container lua-airflow-pipeline-airflow-apiserver-1      Healthy                                                                                                                                                            29.1s
+ ✔ Container lua-airflow-pipeline-airflow-worker-1         Started                                                                                                                                                            29.3s
+ ✔ Container lua-airflow-pipeline-airflow-init-1           Exited
+```
+
+## Accessing the Airflow Web UI
+
+It may take a up to full minute after the `airflow-apiserver` has the `Started` status before you can access the airflow web UI. You can access
+the airflow web UI by navigating to `http://localhost:8080` in your browser. You should see the airflow login page. Use the username and password
+`airflow` to login.
+
+<Image
+  client:load
+  alt="Airflow Localhost Home Page"
+  caption="Airflow Localhost Home Page"
+  src="/static/post-images/setup-airflow-part-one/airflow-localhost-home-page.png"
+/>
+
+When you are done working for the day, you can stop the airflow services by running the following command:
+
+```bash
+docker compose down
+```
+
+This will stop the airflow services and remove the containers but still keep the data in the metadata database and redis.
+
+For convience, I am creating a makefile to help me with the docker commands. Create a file named `makefile` in the root of
+the repo and add the following content.
+
+```makefile
+# Run when there is a change in the docker compose file. It will build the container again and start the services
+# in the background.
+build:
+	docker compose up --build -d
+
+# Run to start the services in the background.
+up:
+	docker compose up -d
+
+# Run to stop the services.
+down:
+	docker compose down
+
+# Run to restart the services. Combine above two commands.
+restart:
+	docker compose down && docker compose up -d
+
+# Run to rebuild the container and restart the services. Combine above two commands.
+rebuild:
+	docker compose down && docker compose up --build -d
+
+# Run to completely remove the services and volumes. This will remove all the data stored in the metadata database
+# and redis.
+flush:
+	docker compose down --volumes --remove-orphans
+```
+
+Now you can simply run the commands as `make build`, `make up`, `make down`, `make restart`, `make rebuild` or `make flush`.
+
+## Airflow Configurations
+
+For the most part we are going to leave the default configurations as is. However, if you open the DAGs screen on the localhost
+airflow setup you will see a lot of example DAGs. I don't like this, I would rather have a clean slate. So let's remove them.
+
+Go into your `docker-compose.yaml` file and find the `AIRFLOW__CORE__LOAD_EXAMPLES` variable. Change its value to `false`. that
+should be it. This is a simple example of how easy it is to change the configurations of airflow. Remember since we changed the
+docker compose file, we need to rebuild the container. Run `make rebuild` to do so. if it still doesn't work run the `make flush`
+command to remove the containers and volumes and then run `make build`.
+
+## Completing the repo setup
+
+What we have done so far?
+
+1. .python-version
+2. .gitignore
+3. .env
+4. .vscode/settings.json
+5. makefile
+6. .python-version
+
+Since we are setting up the project to be used by multiple developers over a long period of time, its better if we set some ground rules
+which everyone working on the project has to follow. We can start with the python version. In the start of the guide we set the python
+version to `3.12.1`.
+
+## Installing packages for linting and formatting
+
+## Creating a smoke DAG
+
+Now let's create a simple DAG. I am going to name it smoke DAG. It will have three tasks each will wait one second before continuing
+to the next task. I am not going to cover how DAGs and Tasks are created in Airflow in this guide.
+
+{/* Add smoke dag and dag task images */}
+
+## Creating connections for Postgres and AWS S3

@@ -1,0 +1,87 @@
+---
+title: "Get Started with Postgres on Local"
+description: "Learn how to get started with Postgres on Local."
+image: ""
+date: "May 20 2025"
+status: "draft"
+tags:
+  - Postgres
+  - React Native
+  - Expo
+  - SQL
+  - Supabase
+---
+
+## Supabase for Expense Tracker App
+
+## Local Setup
+
+We are follwoing the [Local Development & CLI](https://supabase.com/docs/guides/local-development) setup docs from Supabase.
+
+Before we start, I am going to run a few basic commands to get the repo setup correctly.
+
+```bash
+npm init -y
+git init
+touch .gitignore
+touch .env
+touch README.md
+touch .nvmrc
+```
+
+With the basic setup out of the way, we can start the supabase service. There are several ways to install Supabase locally. I am
+going to install it as a dev dependency using npm. Then initialize the supabase project.
+
+```bash
+npm install supabase --save-dev
+npx supabase init
+```
+
+At this point I have a very basic nodejs repo with supabase installed and initialized. Only thing left to do is to start the supabase service.
+
+## Running Supabase Locally
+
+> [!NOTE]
+> You need to have docker running on your machine.
+
+To start and stop the supabase service, run the following commands:
+
+```bash
+npx supabase start
+npx supabase stop
+```
+
+These commands will start/stop multiple services on your machine of different ports.
+
+1. API URL: http://127.0.0.1:54321
+2. Studio URL: http://127.0.0.1:54323
+3. Inbucket URL: http://127.0.0.1:54324
+4. GraphQL URL: http://127.0.0.1:54321/graphql/v1
+5. S3 Storage URL: http://127.0.0.1:54321/storage/v1/s3
+6. DB URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+> [!NOTE]
+> The Inbucket URL points to a local SMTP server which will be used to test email functionality.
+> The DB URL is the connection string for the postgres database on your local machine.
+
+> [!WARNING]
+> Do **NOT** store your production connection string anywhere in your codebase or readme.
+
+## Creating Tables
+
+As we are building an expense tracker app, we need to create a table to store the transactions.
+Each transactions will belong to a wallet in the user's account and will have an associated category.
+
+The process of creating and updating tables is a bit different in Supabase. It seems like the Supabase documentation
+pushes users to create remote (hosted) Supabase service but I don't want to do that. I want to work on Supabase 100% locally.
+I want to use migrations to create and update tables. So its easy to onboard new developers to the project later.
+
+Instead of creating the migrations upfront, I will create the tables and fields from the Supabase Studio. Once the tables are created,
+I will use Supabase's `diff` function to extract the changes from Supabase in SQL. Then create new migrations from the SQL manually. Once
+the work on the local Supabase is done, I will push the migrations to the remote Supabase service using the `supabase db push` command.
+
+1. Create tables in Supabase Studio
+2. Use `npx supabase db diff` to extract the changes in SQL
+3. Create new migrations using `npx supabase migration new {migration-name}`
+4. Manually copy the SQL from the diff command and paste it into the migration file
+5. We will upload the migrations to the remote Supabase service later ...
