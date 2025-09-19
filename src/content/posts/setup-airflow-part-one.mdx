@@ -23,7 +23,7 @@ Before you start this guide, you need working knowledge of docker, docker compos
 installed on your machine. This guide uses Mac for development environment, so you might need to adjust some commands based on your
 operating system.
 
-> I am using python `3.12.1` for this guide.
+> I am using python `3.12.1` for this guide. We will set the python version for the repo in the later stages.
 
 ## Setting up Airflow
 
@@ -59,11 +59,7 @@ airflow container.
 > By default git will ignore empty directories when pushing to the code. You can bypass this by adding a `.gitkeep` file inside the
 > empty directories so they are included in the git repo.
 
-At this point we are ready to start the airflow services but before we do that, let's create a file essential files for the repo to be
-acutally functional. Remember we are setting up the repo for proper development and not just for learning. Create an `.env` file in the
-root of the repo. This will be used later on. Run `git init` to initialize the repo. Personally I like to create a `settings.json` file
-for my vscode settings and commit it to git. This way everyone working on the project will have the same settings. Later we will also
-setup packages like `ruff` and `black` with pre-commit hooks to keep the codebase neat and clean.
+At this point we are ready to start the airflow services.
 
 ## Starting the Airflow services
 
@@ -76,6 +72,8 @@ file. Add the following variable to the `.env` file:
 AIRFLOW_UID=50000
 ```
 
+### Setting up the config file
+
 You can also initialize the airflow config file. We will not do it in this guide. We are going to use the default config settings. In case
 you want to initialize the config file, run.
 
@@ -85,7 +83,9 @@ docker compose run airflow-cli airflow config list
 
 This will seed the `airflow.cfg` file with the default values in the `config` directory.
 
-Now let's initialize the metadata database. The metadata base is where airflow stores all the information it tracks. Run the following
+### Initializing the metadata database
+
+The metadata base is where airflow stores all the information it tracks. Run the following
 docker compose command:
 
 ```bash
@@ -94,9 +94,6 @@ docker compose up airflow-init
 
 After the command completes, you should see a message with the exit code `0`. This means the initialization was successful. It will create
 an username and password of `airflow` for the admin user. You can use these credentials to login to the airflow web UI on you local machine.
-
-At this point running `docker ps` should show that the `postgres` and `redis` services are up and running. We are going to use both of these
-in airflow. Postgres is used as the metadata database and redis is used as the message broker.
 
 You can now start the airflow services by running the following command:
 
@@ -128,6 +125,7 @@ the airflow web UI by navigating to `http://localhost:8080` in your browser. You
 
 <Image
   client:load
+  extendWidth
   alt="Airflow Localhost Home Page"
   caption="Airflow Localhost Home Page"
   src="/static/post-images/setup-airflow-part-one/airflow-localhost-home-page.png"
