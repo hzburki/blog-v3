@@ -14,20 +14,20 @@ tags:
 
 import { Image } from "../../components/blog";
 
-This guide will walk you through setting up an airflow workflow with docker and git for local development. In later parts, we will provision
-resources on AWS and setup a fully working production grade ETL pipeline.
+This guide will walk you through setting up an Airflow workflow with Docker and Git for local development. In later parts, we will provision
+resources on AWS and set up a fully working production-grade ETL pipeline.
 
 ## Prerequisites
 
-Before you start this guide, you need working knowledge of docker, docker compose, python and git. You also need to have docker desktop
-installed on your machine. This guide uses Mac for development environment, so you might need to adjust some commands based on your
+Before you start this guide, you need working knowledge of Docker, Docker Compose, Python and Git. You also need to have Docker Desktop
+installed on your machine. This guide uses Mac for the development environment, so you might need to adjust some commands based on your
 operating system.
 
-> I am using python `3.12.1` for this guide. We will set the python version for the repo in the later stages.
+> I am using Python `3.12.1` for this guide. We will set the Python version for the repo in the later stages.
 
 ## Setting up Airflow
 
-Luckily for us Airflow provides an official docker compose file to get us started. You can download the file using the following command:
+Luckily for us, Airflow provides an official Docker Compose file to get us started. You can download the file using the following command:
 
 ```bash
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.0.6/docker-compose.yaml'
@@ -35,17 +35,17 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.0.6/docker-compose.y
 
 > We are using Airflow 3.0.6 for this guide. You can check the latest version on [airflow.apache.org](airflow.apache.org).
 
-The docker compose file contains alot of services we need including;
+The Docker Compose file contains a lot of services we need, including:
 
 - **airflow-scheduler**: Oversees all tasks and DAGs, initiating task instances when their dependencies have been satisfied
 - **airflow-dag-processor**: Parses the DAG files
-- **airflow-api-server**: Provides the web UI for airflow
+- **airflow-api-server**: Provides the web UI for Airflow
 - **airflow-worker**: Executes tasks assigned by the scheduler
 - **airflow-triggerer**: Manages an event loop for tasks that can be deferred
 - **airflow-init**: This is the initialization service
 - **postgres**: Serves as the metadata database
 - **redis**: Acts as a message broker, relaying communications between scheduler and worker
-- **flower**: Provides a web UI for monitoring and managing airflow
+- **flower**: Provides a web UI for monitoring and managing Airflow
 
 Airflow requires some directories to hold code for DAGs and plugins. These have a fixed name by convention and are already mounted in
 the docker compose file. This means when you create them on your local machine, their content will be automatically synced into the
@@ -56,16 +56,16 @@ airflow container.
 - **plugins**: Contains plugin files
 - **config**: Contains configuration files
 
-> By default git will ignore empty directories when pushing to the code. You can bypass this by adding a `.gitkeep` file inside the
-> empty directories so they are included in the git repo.
+> By default, Git will ignore empty directories when pushing code. You can bypass this by adding a `.gitkeep` file inside the
+> empty directories so they are included in the Git repo.
 
-At this point we are ready to start the airflow services.
+At this point, we are ready to start the Airflow services.
 
 ## Starting the Airflow services
 
-> Before running any of the docker compose commands, make sure you have docker desktop running.
+> Before running any of the Docker Compose commands, make sure you have Docker Desktop running.
 
-Airflow needs to have a user id to run as. This is because the airflow container runs as a non-root user. We can set this in the `.env`
+Airflow needs to have a user ID to run as. This is because the Airflow container runs as a non-root user. We can set this in the `.env`
 file. Add the following variable to the `.env` file:
 
 ```bash
@@ -74,8 +74,8 @@ AIRFLOW_UID=50000
 
 ### Setting up the config file
 
-You can also initialize the airflow config file. We will not do it in this guide. We are going to use the default config settings. In case
-you want to initialize the config file, run.
+You can also initialize the Airflow config file. We will not do it in this guide. We are going to use the default config settings. In case
+you want to initialize the config file, run:
 
 ```bash
 docker compose run airflow-cli airflow config list
@@ -85,24 +85,24 @@ This will seed the `airflow.cfg` file with the default values in the `config` di
 
 ### Initializing the metadata database
 
-The metadata base is where airflow stores all the information it tracks. Run the following
-docker compose command:
+The metadata database is where Airflow stores all the information it tracks. Run the following
+Docker Compose command:
 
 ```bash
 docker compose up airflow-init
 ```
 
 After the command completes, you should see a message with the exit code `0`. This means the initialization was successful. It will create
-an username and password of `airflow` for the admin user. You can use these credentials to login to the airflow web UI on you local machine.
+a username and password of `airflow` for the admin user. You can use these credentials to log in to the Airflow web UI on your local machine.
 
-You can now start the airflow services by running the following command:
+You can now start the Airflow services by running the following command:
 
 ```bash
 docker compose up -d
 ```
 
-This will start the airflow services in the background. The `-d` flag ensures the services run in the background. When successful, you should
-see all the airflow services running. You should see something like this:
+This will start the Airflow services in the background. The `-d` flag ensures the services run in the background. When successful, you should
+see all the Airflow services running. You should see something like this:
 
 ```bash
 docker compose up -d
@@ -119,9 +119,9 @@ docker compose up -d
 
 ## Accessing the Airflow Web UI
 
-It may take a up to full minute after the `airflow-apiserver` has the `Started` status before you can access the airflow web UI. You can access
-the airflow web UI by navigating to `http://localhost:8080` in your browser. You should see the airflow login page. Use the username and password
-`airflow` to login.
+It may take up to a full minute after the `airflow-apiserver` has the `Started` status before you can access the Airflow web UI. You can access
+the Airflow web UI by navigating to `http://localhost:8080` in your browser. You should see the Airflow login page. Use the username and password
+`airflow` to log in.
 
 <Image
   client:load
@@ -131,18 +131,21 @@ the airflow web UI by navigating to `http://localhost:8080` in your browser. You
   src="/static/post-images/setup-airflow-part-one/airflow-localhost-home-page.png"
 />
 
-When you are done working for the day, you can stop the airflow services by running the following command:
+When you are done working for the day, you can stop the Airflow services by running the following command:
 
 ```bash
 docker compose down
 ```
 
-This will stop the airflow services and remove the containers but still keep the data in the metadata database and redis.
+This will stop the Airflow services and remove the containers but still keep the data in the metadata database and Redis.
 
-For convience, I am creating a makefile to help me with the docker commands. Create a file named `makefile` in the root of
-the repo and add the following content.
+For convenience, I am creating a Makefile to help me with the Docker commands. Create a file named `Makefile` in the root of
+the repo and add the following content:
 
 ```makefile
+# Tell makefile the following commands are not files.
+.PHONY: build up down restart rebuild flush
+
 # Run when there is a change in the docker compose file. It will build the container again and start the services
 # in the background.
 build:
@@ -170,40 +173,427 @@ flush:
 	docker compose down --volumes --remove-orphans
 ```
 
-Now you can simply run the commands as `make build`, `make up`, `make down`, `make restart`, `make rebuild` or `make flush`.
+Now you can simply run the commands as `make build`, `make up`, `make down`, `make restart`, `make rebuild`, or `make flush`.
 
 ## Airflow Configurations
 
-For the most part we are going to leave the default configurations as is. However, if you open the DAGs screen on the localhost
-airflow setup you will see a lot of example DAGs. I don't like this, I would rather have a clean slate. So let's remove them.
+For the most part, we are going to leave the default configurations as is. However, if you open the DAGs screen on the localhost
+Airflow setup, you will see a lot of example DAGs. I don't like this — I would rather have a clean slate. So let's remove them.
 
-Go into your `docker-compose.yaml` file and find the `AIRFLOW__CORE__LOAD_EXAMPLES` variable. Change its value to `false`. that
-should be it. This is a simple example of how easy it is to change the configurations of airflow. Remember since we changed the
-docker compose file, we need to rebuild the container. Run `make rebuild` to do so. if it still doesn't work run the `make flush`
-command to remove the containers and volumes and then run `make build`.
+Go into your `docker-compose.yaml` file and find the `AIRFLOW__CORE__LOAD_EXAMPLES` variable. Change its value to `false`. That
+should be it. This is a simple example of how easy it is to change the configurations of Airflow. Remember, since we changed the
+Docker Compose file, we need to rebuild the container. Run `make rebuild` to do so. If it still doesn't work, run the `make flush`
+command to remove the containers and volumes, and then run `make build`.
 
 ## Completing the repo setup
 
-What we have done so far?
+The next step is to add code to the repo and start creating our DAGs, but before that, let's finish off the repo setup. We have already
+created the `Makefile` for the Docker Compose commands, the `.env` files for the environment variables, and we are using Python version
+`3.12.1`, but this is not enough. We need to make sure anyone working on this repo has the exact same setup and configurations.
 
-1. .python-version
-2. .gitignore
-3. .env
-4. .vscode/settings.json
-5. makefile
-6. .python-version
+Let's start with a `.gitignore` file. You can find a sample from the internet or use mine.
 
-Since we are setting up the project to be used by multiple developers over a long period of time, its better if we set some ground rules
-which everyone working on the project has to follow. We can start with the python version. In the start of the guide we set the python
-version to `3.12.1`.
+```gitignore
+# Python
+__pycache__/
+**/__pycache__/
+**/__pycache__/**
+*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-## Installing packages for linting and formatting
+# Virtual Environment
+venv/
+ENV/
+
+# IDE files
+.idea/
+.vscode/
+
+# Credentials
+.env
+
+# Logs
+logs/
+*.log
+
+# Data
+*.csv
+*.xlsx
+*.parquet
+data/
+
+# Docker
+.docker/
+
+# Cache
+.ruff_cache/
+```
+
+I also like to commit a `.vscode/settings.json` file to the repo. This way, everyone working on the project has the exact same settings
+for VS Code or Cursor. For now, just create an empty file.
+
+The last and most important thing I want to do is set a Python version for the project. A quick Google search confirms that Python `3.12.1`
+is supported by Airflow 3.0.6, so we are good there. Now let's bake it into the repo.
+
+Since we are setting up the project to be used by multiple developers over a long period of time, it's better if we set some ground rules
+which everyone working on the project has to follow. We can start with the Python version.
+
+At the start of the guide, we set the Python version to `3.12.1`. Let's do two things to ensure everyone working on the project has the same
+Python version. First, let's add a `.python-version` file to the root of the repo. This way, anyone using `pyenv` will use the same Python version.
+
+```python
+3.12.1
+```
+
+Second, let's add the Python version to the Docker Compose file in the image name for Airflow. Find and update the following line:
+
+```yaml
+airflow-apiserver:
+  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.6-python3.12}
+```
+
+This will ensure that the Airflow container has Python `3.12` on all local and production environments. Don't forget to run the `make rebuild`
+command. It will stop and build the containers again.
+
+### Installing packages for linting and formatting
+
+With the Python version set, let's install the packages for linting and formatting. Linting and formatting are important for code quality. They
+help standardize the code and make it more readable. Before we add packages, let's set up Poetry for dependency management. For someone like me,
+coming from Node.js, Poetry is a great choice because it acts as a direct replacement for npm.
+
+### Poetry ≈ npm
+
+I can't remember all the commands for a new language, so I am going to use this table as reference when adding packages to the project.
+
+| Feature                   | npm (Node.js)                    | Poetry (Python)               |
+| ------------------------- | -------------------------------- | ----------------------------- |
+| Project file              | package.json                     | pyproject.toml                |
+| Lock file                 | package-lock.json                | poetry.lock                   |
+| Dependencies folder       | node_modules/                    | .venv/ (virtual env)          |
+| Install dependencies      | npm install                      | poetry install                |
+| Add dependency            | npm install express              | poetry add requests           |
+| Add dev dependency        | npm install -D jest              | poetry add --group dev pytest |
+| Run scripts               | npm run build                    | poetry run python script.py   |
+| Remove regular dependency | poetry remove boto3              | npm uninstall express         |
+| Remove dev dependency     | poetry remove --group dev pytest | npm uninstall -D jest         |
+
+Now let's install Poetry, initialize the project, and add the packages for linting and formatting.
+
+```bash
+# Install globally
+pip install poetry
+
+# Run and follow the prompts
+poetry init
+
+# Following the table above
+poetry add --group dev ruff black pre-commit
+```
+
+Once we have the packages installed, let's set up some basic rules for the linter and formatter to follow. I just asked AI for some basic rules and added
+them at the bottom of the `pyproject.toml`. I am not really sure what it's doing or if it's good or bad 😬.
+
+```toml
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.venv
+  | build
+  | dist
+  | ^logs/
+  | ^test_data/
+)/
+'''
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "logs",
+    "test_data"
+]
+
+[tool.ruff.lint]
+# Enable core rules + import sorting + bugbear + pyupgrade
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+# Let Black handle line length
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+```
+
+Now let's format the code, check for linting errors, and fix them. Remember, we are only adding code to the `dags` and `plugins` directories.
+
+```bash
+# Format the code
+poetry run black dags/ plugins/
+
+# Check the code
+poetry run ruff check dags/ plugins/
+
+# Fix the code
+poetry run ruff check --fix dags/ plugins/
+```
+
+Let's add them to the `Makefile` like below:
+
+```makefile
+# Tell makefile the following commands are not files.
+.PHONY: build up down restart rebuild flush format lint fix
+
+# Format the code
+format:
+	poetry run black dags/ plugins/
+
+# Check the code
+lint:
+	poetry run ruff check dags/ plugins/
+
+# Fix the code
+fix:
+	poetry run ruff check --fix dags/ plugins/
+```
+
+The last thing I want is to automatically run the format and lint commands on the files I have worked on every time I commit code. Let's do this by setting up
+pre-commit hooks.
+
+```bash
+# Install the pre-commit hooks
+poetry run pre-commit install
+```
+
+Create a `.pre-commit-config.yaml` file in the root of the repo. Once again, I asked AI to create the file for me. Ignorance is bliss 😄.
+
+```yaml
+# Pre-commit configuration for Python linting and formatting
+ci:
+  skip: []
+exclude: |
+  (?x)^(
+    logs/|
+    test_data/|
+    .ruff_cache/
+    .vscode/
+    config/
+  )
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+        types_or: [python, pyi]
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+```
+
+And that's it! The format and lint commands should be working now. Note: when setting up this repo on a new machine, you will need to run the
+`poetry run pre-commit install` command to set up the pre-commit hooks once.
+
+Optionally, you can run the `poetry run pre-commit run --all-files` command once to run the pre-commit hooks on all the files in the repo.
+I also recommend adding the install and run commands to the `Makefile` like below:
+
+```makefile
+# Setup the pre-commit hooks
+setup-pre-commit:
+	poetry run pre-commit install
+
+# Run the pre-commit hooks
+run-pre-commit:
+	poetry run pre-commit run --all-files
+```
+
+> When you commit code, the pre-commit hooks run automatically and usually fail the first time even though they fixed the linting errors.
+> You will need to commit again to push the code.
 
 ## Creating a smoke DAG
 
-Now let's create a simple DAG. I am going to name it smoke DAG. It will have three tasks each will wait one second before continuing
-to the next task. I am not going to cover how DAGs and Tasks are created in Airflow in this guide.
+That was a lot more setup than I expected! At least now I have peace of mind that other developers won't have to waste so much time on setup
+and mismatches in their local environments. So let's get to the fun part!
+
+To start off easy, let's create a simple DAG. I am going to name it "smoke DAG". It simply checks if a hard-coded number is even or odd in the
+first task and prints the result in the second task. For this, we need to install the `is-even` package. Run the following command to install it:
+
+```bash
+poetry add is-even
+```
+
+Now let's create the DAG.
+
+```python
+# Package imports
+import logging
+from is_even import is_even
+from airflow.decorators import dag, task
+
+# Internal imports
+import pendulum
+
+@dag(
+    dag_id="smoke_dag",
+    start_date=pendulum.datetime(2023, 1, 1, tz="UTC"),
+    catchup=False,
+    schedule=None,
+    tags=["smoke"],
+)
+def smoke_dag():
+    @task(multiple_outputs=True)
+    def check_even():
+        logging.info("I am the first task")
+        return is_even(10)
+
+    @task()
+    def print_even(even):
+        logging.info("I am the second task")
+        if (even):
+            logging.info(f"The number is even: {even}")
+        else:
+            logging.info(f"The number is odd: {even}")
+
+    # Single task invocation
+    even = check_even()
+    printed = print_even(even)
+
+    even >> printed
+
+smoke_dag()
+```
 
 {/* Add smoke dag and dag task images */}
 
-## Creating connections for Postgres and AWS S3
+At this point, we have installed the package — we can see it in the `pyproject.toml` file, but it's not present in the Airflow container. Let's fix that by
+creating a `requirements.txt` file in the root of the repo, copying it into the Airflow container, and installing it. As always, we are going to add all the repeatable
+terminal commands to the `Makefile`.
+
+```bash
+# Create requirements.txt with only project dependencies (cleaner)
+requirements:
+	poetry show --only=main | awk '{print $$1"=="$$2}' > requirements.txt
+
+# Create the requirements.txt file with all dependencies
+requirements-all:
+	poetry run pip freeze > requirements.txt
+```
+
+Now, let's add the packages to the Airflow container. There are multiple ways to do this. In this guide, let's create a separate Dockerfile and build it
+in our Docker Compose file. Later on, we can use the same Dockerfile for the production environment.
+
+```dockerfile
+FROM apache/airflow:3.0.6-python3.12
+
+# Copy requirements file
+COPY requirements.txt /requirements.txt
+
+# Install packages
+RUN pip install --no-cache-dir -r /requirements.txt
+```
+
+The last step is to comment out the image line in the Docker Compose file and build the container using the new `Dockerfile`. This only works if you have a `Dockerfile`
+in the same directory as the Docker Compose file. Otherwise, you will need to specify the path of the `Dockerfile`.
+
+```yaml
+x-airflow-common: &airflow-common
+  # Comment out the image line
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.6-python3.12}
+  # Uncomment the build line
+  build: .
+```
+
+And that's it! We have created a simple DAG and added the packages to the Airflow container. We can now run the DAG and see the result. Remember to run the `make rebuild`
+command to build the container again.
+
+## ✅ Checklist: What We've Accomplished
+
+Hopefully this guide has helped you get started with Airflow and Docker. So far, we have accomplished the following:
+
+### 🐳 **Initial Setup**
+
+- ✅ Download Airflow setup files
+- ✅ Create project directories
+- ✅ Configure environment variables
+- ✅ Start Airflow services
+
+### ⚙️ **Configuration**
+
+- ✅ Customize Airflow settings
+- ✅ Create helper commands
+- ✅ Set up project structure
+
+### 🐍 **Development Environment**
+
+- ✅ Install package manager
+- ✅ Configure project dependencies
+- ✅ Set up code formatting tools
+
+### 📦 **Package Management**
+
+- ✅ Create package requirements
+- ✅ Build custom container
+- ✅ Install project packages
+
+### 🚀 **First Workflow**
+
+- ✅ Create sample workflow
+- ✅ Test workflow execution
+- ✅ Verify results in interface
+
+---
+
+In the next part, we will create connections for the Postgres and AWS S3 databases and set up a fully working production-grade ETL pipeline.
