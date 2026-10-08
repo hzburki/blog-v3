@@ -1,0 +1,9 @@
+#!/bin/sh
+# Runs the same gate as the deploy: type-check, unit tests, build, and the
+# tests against dist/. A failure aborts the commit.
+
+if ! npm run build; then
+  echo ""
+  echo "pre-commit: checks failed, commit aborted."
+  exit 1
+fi

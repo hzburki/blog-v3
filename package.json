@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && npm test && astro build && npm run test:dist",
     "preview": "astro preview",
     "test": "node --experimental-strip-types --test \"src/**/*.test.ts\"",
-    "test:build": "astro build && node --experimental-strip-types --test \"tests/**/*.test.ts\"",
+    "test:dist": "node --experimental-strip-types --test \"tests/**/*.test.ts\"",
+    "prepare": "git config core.hooksPath .githooks || true",
     "astro": "astro",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

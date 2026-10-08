@@ -10,17 +10,17 @@ Source for [hzburki.com](https://hzburki.com), Haseeb Zia Burki's personal blog:
 
 ```bash
 npm run dev           # dev server on localhost:4321 (drafts visible)
-npm run build         # astro check (type-check) + static build to dist/
+npm run build         # type-check, unit tests, build to dist/, then tests on dist/
 npm run preview       # serve the production build
-npm test              # unit tests (node:test)
-npm run test:build    # build, then check dist/ (meta tags, feed)
+npm test              # unit tests only (src/**/*.test.ts)
+npm run test:dist     # tests against an existing dist/ (tests/*.test.ts)
 npm run format        # Prettier, writes
 npm run format:check  # Prettier, check only
 ```
 
 Node version is pinned in `.nvmrc` (v22).
 
-There is no linter and no CI. `npm run build` catches type errors and frontmatter schema violations; `npm test` runs the unit tests (`src/**/*.test.ts`, Node's built-in test runner, no extra dependencies). `npm run test:build` builds the site and then checks the output in `dist/` (`tests/*.test.ts`). Run it after changing pages, layouts, components, or `src/content.config.ts`.
+`npm run build` is the full verification step and the deploy gate: it runs `astro check`, the unit tests, the build, and then the tests against `dist/`, and stops at the first failure. As long as the host's build command is `npm run build`, a failing test blocks the deploy. A git pre-commit hook (`.githooks/pre-commit`) runs the same command and aborts the commit if it fails; `npm install` enables it by pointing `core.hooksPath` at `.githooks`. There is no CI, by choice: do not add GitHub Actions workflows. Tests use Node's built-in runner with no extra dependencies. There is no linter.
 
 ## Deployment and git workflow
 

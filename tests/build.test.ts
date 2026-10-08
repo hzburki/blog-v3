@@ -1,4 +1,5 @@
-// Checks the production build in dist/. Run with `npm run test:build`.
+// Checks the production build in dist/. `npm run build` runs these after building;
+// `npm run test:dist` re-runs them against an existing dist/.
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";

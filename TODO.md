@@ -66,7 +66,9 @@ Done in this pass: everything is on its latest release except TypeScript, `npm a
 
 ## 7. Repo hygiene
 
-- [ ] Add CI: one workflow running `npm ci`, `npm run format:check`, and `npm run build` on pull requests. `main` deploys automatically, so this is the only gate before production.
+- [x] Gate commits on the tests: `.githooks/pre-commit` runs `npm run build` (type-check, tests, build) and aborts the commit on failure. No GitHub Actions, to avoid using credits.
+- [ ] Add `npm run format:check` to the pre-commit hook once the 17 unformatted files are fixed.
+- [ ] Confirm the host's build command is `npm run build` (not `astro build`), so tests gate the deploy.
 - [ ] `README.md` is only the bio. Add setup, commands, and how to write a post.
 - [ ] Remove the leftover local `supabase/` directory (untracked remains of a deleted post).
 - [ ] Add a 404 page (`src/pages/404.astro`); there is none.
