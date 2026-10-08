@@ -12,13 +12,14 @@ Source for [hzburki.com](https://hzburki.com), Haseeb Zia Burki's personal blog:
 npm run dev           # dev server on localhost:4321 (drafts visible)
 npm run build         # astro check (type-check) + static build to dist/
 npm run preview       # serve the production build
+npm test              # unit tests (node:test)
 npm run format        # Prettier, writes
 npm run format:check  # Prettier, check only
 ```
 
 Node version is pinned in `.nvmrc` (v22).
 
-There are no tests, no linter, and no CI. `npm run build` is the only verification step, and it is the one that catches type errors and frontmatter schema violations. Run it after changing pages, layouts, components, or `src/content.config.ts`.
+There is no linter and no CI. `npm run build` catches type errors and frontmatter schema violations; `npm test` runs the unit tests (`src/**/*.test.ts`, Node's built-in test runner, no extra dependencies). Run it after changing pages, layouts, components, or `src/content.config.ts`.
 
 ## Deployment and git workflow
 
@@ -47,9 +48,8 @@ React is used only for the three MDX components in `src/components/blog/`; every
 
 Posts with `status: "draft"` are meant to be visible in dev and absent from production. There is no shared helper: each page checks `import.meta.env.DEV` and `post.data.status` on its own. Any new page or endpoint that reads the collection has to repeat that filter.
 
-Two places currently do not filter, so drafts leak into production output:
+`getVisiblePosts()` in `src/lib/posts.utils.ts` does the filter and the newest-first sort; the RSS feed uses it and new code should too. One place still does not filter, so drafts leak into production output:
 
-- `src/pages/rss.xml.js` lists every post.
 - `src/pages/tags/[tag].astro` lists drafts and generates pages for draft-only tags. The linked post page is not built, so those links 404.
 
 ### Dark mode
