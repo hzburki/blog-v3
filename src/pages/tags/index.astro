@@ -1,21 +1,22 @@
 ---
+import { getCollection } from "astro:content";
 import TagBadge from "../../components/tag-badge.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
 
 const isDev = import.meta.env.DEV;
-const posts = await Astro.glob("../../content/posts/*.mdx");
+const posts = await getCollection("posts");
 
 // Show only published posts in production
 const publishedPosts = isDev
   ? posts
-  : posts.filter((post) => post.frontmatter.status === "published");
+  : posts.filter((post) => post.data.status === "published");
 
 // Extract all tags from published posts
-const allTags = publishedPosts.flatMap((post) => post.frontmatter.tags || []);
+const allTags = publishedPosts.flatMap((post) => post.data.tags);
 
 // Count occurrences of each tag
-const tagCounts = allTags.reduce((acc, tag) => {
+const tagCounts = allTags.reduce<Record<string, number>>((acc, tag) => {
   acc[tag] = (acc[tag] || 0) + 1;
   return acc;
 }, {});

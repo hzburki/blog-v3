@@ -21,7 +21,7 @@ export const Callout: React.FC<CalloutProps> = ({ type, children }) => {
 
   return (
     <div
-      className={`my-4 flex flex-row rounded-md border-l-4 p-4 shadow-sm ${getClassName()}`}
+      className={`my-4 flex flex-row rounded-md border-l-4 p-4 shadow-xs ${getClassName()}`}
     >
       <span className="flex items-center pr-4">
         {type === "info" ? (

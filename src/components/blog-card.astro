@@ -7,7 +7,7 @@ const { post } = Astro.props;
 const showDraft = import.meta.env.DEV && post.data.status === "draft";
 ---
 
-<a href={`/posts/${post.slug}`} class="group flex justify-between gap-3">
+<a href={`/posts/${post.id}`} class="group flex justify-between gap-3">
   <span class="group-hover:underline">
     {post.data.title}
     {showDraft && <span class="text-xs font-light text-blue-500">(Draft)</span>}

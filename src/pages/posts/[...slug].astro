@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { type CollectionEntry, getCollection, render } from "astro:content";
 import TagBadge from "../../components/tag-badge.astro";
 import Layout from "../../layouts/Layout.astro";
 import { formatDate } from "../../lib";
@@ -15,14 +15,14 @@ export async function getStaticPaths() {
   }
 
   return filteredPosts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: post,
   }));
 }
 type Props = CollectionEntry<"posts">;
 
 const post = Astro.props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 ---
 
 <Layout

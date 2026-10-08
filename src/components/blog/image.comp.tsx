@@ -50,7 +50,7 @@ export const Image: React.FC<ImageProps> = ({
         }
       >
         <figure
-          className={`my-4 ${extendWidth ? "mx-auto max-w-screen-md px-4" : "mx-auto max-w-2xl"}`}
+          className={`my-4 ${extendWidth ? "mx-auto max-w-(--breakpoint-md) px-4" : "mx-auto max-w-2xl"}`}
         >
           <div
             className="cursor-pointer overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-lg"
@@ -69,7 +69,7 @@ export const Image: React.FC<ImageProps> = ({
       {/* Modal overlay */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
           onClick={closeModal}
         >
           <div className="max-h-screen w-full max-w-4xl">

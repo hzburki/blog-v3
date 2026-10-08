@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Source for [hzburki.com](https://hzburki.com), Haseeb Zia Burki's personal blog: a fully static Astro v5 site with posts written in MDX. Forked from the [miniblog](https://github.com/nicholasdly/miniblog) template, which is why `package.json` is still named `miniblog`.
+Source for [hzburki.com](https://hzburki.com), Haseeb Zia Burki's personal blog: a fully static Astro v7 site with posts written in MDX. Forked from the [miniblog](https://github.com/nicholasdly/miniblog) template, which is why `package.json` is still named `miniblog`.
 
 ## Commands
 
@@ -18,15 +18,16 @@ npm run format:check  # Prettier, check only
 
 Node version is pinned in `.nvmrc` (v22).
 
-There are no tests, no linter, and no CI. `npm run build` is the only verification step, and it is the one that catches type errors and frontmatter schema violations. Run it after changing pages, layouts, components, or `src/content/config.ts`.
+There are no tests, no linter, and no CI. `npm run build` is the only verification step, and it is the one that catches type errors and frontmatter schema violations. Run it after changing pages, layouts, components, or `src/content.config.ts`.
 
 ## Deployment and git workflow
 
 - `main` is production: pushing to it triggers an automatic deploy. Nothing in the repo configures this; it lives in the hosting provider.
 - Do work on a branch and merge to `main`; never commit to `main` directly.
+
 ## Architecture
 
-All content comes from one content collection, `posts`, defined in `src/content/config.ts` (legacy `type: "content"` collection, so entries use `post.slug` and `post.render()`). Every page is prerendered from it:
+All content comes from one content collection, `posts`, defined in `src/content.config.ts` with a `glob()` loader. Entries are addressed by `post.id` (the filename without extension) and rendered with `render(post)` from `astro:content`. Every page is prerendered from it:
 
 | Route           | File                              | Notes                                |
 | --------------- | --------------------------------- | ------------------------------------ |
@@ -53,13 +54,16 @@ Two places currently do not filter, so drafts leak into production output:
 
 ### Dark mode
 
-Tailwind `darkMode: "class"`. An inline script in `Layout.astro` sets the class on `<html>` from `localStorage.theme`, falling back to `prefers-color-scheme`, and a `MutationObserver` writes changes back to `localStorage`. `theme-toggle.astro` just toggles the `dark` class. Both scripts re-run on `astro:after-swap` because the site uses view transitions; any new script that touches the DOM needs the same treatment.
+Class-based: `global.css` declares `@custom-variant dark` keyed on `.dark`. An inline script in `Layout.astro` sets the class on `<html>` from `localStorage.theme`, falling back to `prefers-color-scheme`, and a `MutationObserver` writes changes back to `localStorage`. `theme-toggle.astro` just toggles the `dark` class. Both scripts re-run on `astro:after-swap` because the site uses view transitions; any new script that touches the DOM needs the same treatment.
 
 Shiki renders dual themes (`catppuccin-latte` / `catppuccin-mocha`); the `html.dark .astro-code` rule in `global.css` switches to the dark one.
 
 ## Styling
 
-- Plain Tailwind v3 with the default palette: `zinc-*` for neutrals, `blue-500` for links. There are no custom color tokens.
+- Tailwind v4 through the `@tailwindcss/vite` plugin (registered in `astro.config.mjs`). There is no `tailwind.config.*`; theme settings live in the `@theme` block of `src/styles/global.css`.
+- Default palette only: `zinc-*` for neutrals, `blue-500` for links. There are no custom color tokens.
+- `global.css` keeps the v3 default border color (`gray-200`) with a base-layer rule, so a bare `border` is light gray, not `currentColor`.
+- A component `<style>` block that uses `@apply` must start with `@reference "../styles/global.css";` (see `header.astro`).
 - Dark mode is done with explicit `dark:` variants, so every color you add needs its dark counterpart.
 - Fonts are self-hosted Geist (`font-sans`) and Geist Mono (`font-mono`) from `public/fonts/`, preloaded in `Layout.astro`.
 - Markdown elements inside a post are styled by the nested `article { ... }` rules in `src/styles/global.css`. Add or change element styles there, not per post.
@@ -118,7 +122,8 @@ import { Accordion, Callout, Image } from "../../components/blog";
 
 ## Known issues
 
-- The default OG image `/static/blog-placeholder.png` (referenced in `content/config.ts` and `Layout.astro`) does not exist in `public/`, so pages without a feature image ship a broken `og:image`.
+- The default OG image `/static/blog-placeholder.png` (referenced in `content.config.ts` and `Layout.astro`) does not exist in `public/`, so pages without a feature image ship a broken `og:image`.
 - `Callout` and `Accordion` have no `dark:` variants.
-- `clsx` is imported in `src/lib/styles.utils.ts` but is only installed transitively.
-- `tags/index.astro` uses the deprecated `Astro.glob()` and `Layout.astro` the deprecated `<ViewTransitions />`. Both still build, with warnings.
+- `astro.config.mjs` sets `compressHTML: true` on purpose. Astro 7's default (`'jsx'`) strips the spaces around inline links in `.astro` templates such as the home page bio.
+- TypeScript is held at 6.x because `@astrojs/check` does not support TypeScript 7 yet.
+- Improvement backlog: [TODO.md](TODO.md).

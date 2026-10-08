@@ -15,7 +15,7 @@ export const Accordion: React.FC<AccordionProps> = ({ heading, children }) => {
 
   return (
     <div
-      className={`my-4 mb-4 flex ${isOpen ? "flex-col" : "flex-row"} rounded-md border p-4 shadow-sm transition-all duration-300 ease-in-out`}
+      className={`my-4 mb-4 flex ${isOpen ? "flex-col" : "flex-row"} rounded-md border p-4 shadow-xs transition-all duration-300 ease-in-out`}
     >
       <div className="flex cursor-pointer items-center" onClick={toggleOpen}>
         {isOpen ? <ChevronUp /> : <ChevronDown />}
