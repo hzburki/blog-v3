@@ -13,13 +13,14 @@ npm run dev           # dev server on localhost:4321 (drafts visible)
 npm run build         # astro check (type-check) + static build to dist/
 npm run preview       # serve the production build
 npm test              # unit tests (node:test)
+npm run test:build    # build, then check dist/ (meta tags, feed)
 npm run format        # Prettier, writes
 npm run format:check  # Prettier, check only
 ```
 
 Node version is pinned in `.nvmrc` (v22).
 
-There is no linter and no CI. `npm run build` catches type errors and frontmatter schema violations; `npm test` runs the unit tests (`src/**/*.test.ts`, Node's built-in test runner, no extra dependencies). Run it after changing pages, layouts, components, or `src/content.config.ts`.
+There is no linter and no CI. `npm run build` catches type errors and frontmatter schema violations; `npm test` runs the unit tests (`src/**/*.test.ts`, Node's built-in test runner, no extra dependencies). `npm run test:build` builds the site and then checks the output in `dist/` (`tests/*.test.ts`). Run it after changing pages, layouts, components, or `src/content.config.ts`.
 
 ## Deployment and git workflow
 
@@ -84,7 +85,7 @@ status: draft | published
 
 - **Prose is proofread-only.** Fixing typos and grammar is fine. Do not reword, restructure, or extend the author's writing unless asked.
 - **Tags must match existing spelling and casing exactly** (`AWS`, `NodeJS`, `SequelizeJS`, `DevOps`, `Elastic Beanstalk`). They are used raw as URL segments, so a variant creates a separate tag page.
-- **Omit `image` rather than setting it to `""`.** The schema default only applies when the key is absent; an empty string makes `og:image` resolve to the page's own URL. The feature image is only used for `og:image`, never rendered on the page.
+- **`image` is optional.** Leave it out when a post has no feature image; a missing or empty value falls back to `DEFAULT_OG_IMAGE` from `src/consts.ts`. The feature image is only used for `og:image`, never rendered on the page.
 - Images used in a post body go in `public/static/post-images/<slug>/`.
 - The page template already renders the title as an `<h1>`, so start in-post headings at `##`.
 

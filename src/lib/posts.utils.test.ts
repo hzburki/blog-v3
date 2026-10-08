@@ -4,6 +4,7 @@ import {
   countPostsByTag,
   getVisiblePosts,
   groupPostsByTag,
+  resolveFeatureImage,
 } from "./posts.utils.ts";
 
 const post = (id: string, status: "draft" | "published", date: string) => ({
@@ -107,4 +108,17 @@ test("tag counts for visible posts leave out drafts", () => {
     ["AWS", 2],
     ["DevOps", 1],
   ]);
+});
+
+test("a feature image path is kept as is", () => {
+  assert.equal(
+    resolveFeatureImage("/static/feature-images/post.jpeg"),
+    "/static/feature-images/post.jpeg",
+  );
+});
+
+test("a missing, empty, or blank feature image falls back to the default", () => {
+  for (const image of [undefined, "", "   "]) {
+    assert.equal(resolveFeatureImage(image), "/static/blog-placeholder.png");
+  }
 });

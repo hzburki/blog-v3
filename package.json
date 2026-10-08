@@ -8,6 +8,7 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "test": "node --experimental-strip-types --test \"src/**/*.test.ts\"",
+    "test:build": "astro build && node --experimental-strip-types --test \"tests/**/*.test.ts\"",
     "astro": "astro",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

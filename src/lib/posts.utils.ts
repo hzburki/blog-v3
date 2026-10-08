@@ -1,3 +1,5 @@
+import { DEFAULT_OG_IMAGE } from "../consts.ts";
+
 interface PostLike {
   data: { status: "draft" | "published"; date: Date };
 }
@@ -34,4 +36,9 @@ export function countPostsByTag<T extends { data: { tags: string[] } }>(
   return [...groupPostsByTag(posts)]
     .map(([tag, list]): [string, number] => [tag, list.length])
     .sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+// A missing or blank frontmatter image falls back to the default og:image.
+export function resolveFeatureImage(image?: string): string {
+  return image?.trim() || DEFAULT_OG_IMAGE;
 }
