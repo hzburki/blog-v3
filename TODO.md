@@ -10,7 +10,7 @@ Improvement backlog from a full code and dependency review (2026-10-09). Ordered
 - [x] **Default OG image does not exist.** `/static/blog-placeholder.png` is the default in `src/content.config.ts` and `Layout.astro`, but there is no such file in `public/static/`. Home, post list, tag pages, and any post without an image ship a broken `og:image`.
 - [x] **`image: ""` produces a wrong `og:image`.** Three posts (`aws-to-cloudflare-domain-transfer-guide`, `setting-up-coolify-aws-ec2-for-development`, `setup-airflow-part-one`) set an empty string, which bypasses the schema default and resolves to the post's own URL. Remove the key from those posts and make the schema reject or ignore `""`.
 - [x] **Twitter card tags use `property=` instead of `name=`** in `Layout.astro`, and `og:type` is `website` on post pages (should be `article`).
-- [ ] **RSS items carry no `pubDate`.** The feed spreads `post.data`, which has `date`, not `pubDate`, so readers cannot order entries. Map `date` to `pubDate` explicitly instead of spreading the whole frontmatter.
+- [x] **RSS items carry no `pubDate`.** The feed spreads `post.data`, which has `date`, not `pubDate`, so readers cannot order entries. Map `date` to `pubDate` explicitly instead of spreading the whole frontmatter.
 
 ## 2. Accessibility
 
@@ -57,6 +57,7 @@ Done in this pass: everything is on its latest release except TypeScript, `npm a
 
 ## 6. Content
 
+- [ ] Three posts write `date` as text (`April 30, 2025`, `March 15, 2025`, `Sep 09 2019`), which is parsed in the build machine's timezone, so the RSS `pubDate` shifts by a day when built outside UTC. Use ISO dates (`2025-04-30`) like the other posts.
 - [ ] `setup-airflow-part-one.mdx` (draft) has an empty `description`; fill it in before publishing.
 - [ ] `serverless-apis-on-the-go.mdx` has a stray `categories:` frontmatter key that the schema silently drops.
 - [ ] `serverless-apis-on-the-go.mdx` line 323: `**--env**` renders as a dash followed by "env". Wrap the flag in backticks.

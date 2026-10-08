@@ -70,3 +70,37 @@ test("post pages are og:type article, every other page is website", () => {
     );
   }
 });
+
+const feedItems = () =>
+  [
+    ...readFileSync(join(DIST, "rss.xml"), "utf8").matchAll(
+      /<item>([\s\S]*?)<\/item>/g,
+    ),
+  ].map(([, item]) => ({
+    link: item.match(/<link>(.*?)<\/link>/)?.[1],
+    pubDate: item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1],
+  }));
+
+test("the RSS feed has one item per published post", () => {
+  const links = feedItems().map((item) => item.link);
+
+  assert.deepEqual(
+    [...links].sort(),
+    postSlugs.map((slug) => `${SITE}/posts/${slug}/`).sort(),
+  );
+});
+
+test("every RSS item has a valid pubDate, newest first", () => {
+  const dates = feedItems().map((item) => {
+    assert.ok(item.pubDate, `${item.link} has no pubDate`);
+    const time = Date.parse(item.pubDate);
+    assert.ok(!Number.isNaN(time), `${item.link}: ${item.pubDate}`);
+    return time;
+  });
+
+  assert.ok(dates.length > 0);
+  assert.deepEqual(
+    dates,
+    [...dates].sort((a, b) => b - a),
+  );
+});

@@ -42,3 +42,18 @@ export function countPostsByTag<T extends { data: { tags: string[] } }>(
 export function resolveFeatureImage(image?: string): string {
   return image?.trim() || DEFAULT_OG_IMAGE;
 }
+
+interface FeedPost {
+  id: string;
+  data: { title: string; description: string; date: Date };
+}
+
+// The fields @astrojs/rss reads; the frontmatter `date` becomes `pubDate`.
+export function toRssItem(post: FeedPost) {
+  return {
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.date,
+    link: `/posts/${post.id}/`,
+  };
+}

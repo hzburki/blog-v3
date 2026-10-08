@@ -5,6 +5,7 @@ import {
   getVisiblePosts,
   groupPostsByTag,
   resolveFeatureImage,
+  toRssItem,
 } from "./posts.utils.ts";
 
 const post = (id: string, status: "draft" | "published", date: string) => ({
@@ -121,4 +122,40 @@ test("a missing, empty, or blank feature image falls back to the default", () =>
   for (const image of [undefined, "", "   "]) {
     assert.equal(resolveFeatureImage(image), "/static/blog-placeholder.png");
   }
+});
+
+test("an RSS item maps the post date to pubDate and links to the post", () => {
+  const date = new Date("2025-04-30");
+  const item = toRssItem({
+    id: "my-post",
+    data: { title: "My post", description: "About it", date },
+  });
+
+  assert.deepEqual(item, {
+    title: "My post",
+    description: "About it",
+    pubDate: date,
+    link: "/posts/my-post/",
+  });
+});
+
+test("an RSS item carries no other frontmatter fields", () => {
+  const post = {
+    id: "my-post",
+    data: {
+      title: "My post",
+      description: "About it",
+      date: new Date("2025-04-30"),
+      status: "published",
+      tags: ["AWS"],
+      image: "/static/blog-placeholder.png",
+    },
+  };
+
+  assert.deepEqual(Object.keys(toRssItem(post)).sort(), [
+    "description",
+    "link",
+    "pubDate",
+    "title",
+  ]);
 });
