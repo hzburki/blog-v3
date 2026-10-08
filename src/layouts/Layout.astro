@@ -80,32 +80,25 @@ const {
 </html>
 
 <script is:inline>
-  const setTheme = () => {
-    let theme;
+  const getTheme = () => {
+    const stored =
+      typeof localStorage !== "undefined" && localStorage.getItem("theme");
+    if (stored) return stored;
 
-    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-      theme = localStorage.getItem("theme");
-    } else {
-      theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    }
-
-    document.documentElement.classList[theme ? "add" : "remove"](theme);
-
-    if (typeof localStorage !== "undefined") {
-      const observer = new MutationObserver(() => {
-        const isDark = document.documentElement.classList.contains("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "light");
-      });
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class"],
-      });
-    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   };
 
-  setTheme();
+  const applyTheme = (doc) => {
+    doc.documentElement.classList.toggle("dark", getTheme() === "dark");
+  };
 
-  document.addEventListener("astro:after-swap", setTheme);
+  applyTheme(document);
+
+  // The client router replaces <html>'s attributes on navigation, so set the
+  // class on the incoming document before it is swapped in.
+  document.addEventListener("astro:before-swap", (event) => {
+    applyTheme(event.newDocument);
+  });
 </script>
