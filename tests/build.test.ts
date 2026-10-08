@@ -44,3 +44,29 @@ test("pages without a feature image use the default og:image", () => {
     `${SITE}/static/blog-placeholder.png`,
   );
 });
+
+test("twitter card tags use name=, open graph tags use property=", () => {
+  for (const path of pages) {
+    const html = page(path);
+
+    assert.doesNotMatch(html, /<meta property="twitter:/, path || "/");
+    assert.doesNotMatch(html, /<meta name="og:/, path || "/");
+
+    for (const key of ["card", "url", "title", "description", "image"]) {
+      assert.ok(meta(html, "name", `twitter:${key}`), `${path || "/"}: ${key}`);
+    }
+    assert.equal(meta(html, "name", "twitter:card"), "summary_large_image");
+  }
+});
+
+test("post pages are og:type article, every other page is website", () => {
+  for (const path of pages) {
+    const expected = path.startsWith("posts/") ? "article" : "website";
+
+    assert.equal(
+      meta(page(path), "property", "og:type"),
+      expected,
+      path || "/",
+    );
+  }
+});

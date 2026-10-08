@@ -9,7 +9,7 @@ Improvement backlog from a full code and dependency review (2026-10-09). Ordered
 - [x] **Centralise the draft filter.** The dev/prod `status` check is copy-pasted into three files and missing from two. Add one `getPosts()` helper in `src/lib/` that filters and sorts, and use it everywhere. This fixes both leaks above and prevents the next one.
 - [x] **Default OG image does not exist.** `/static/blog-placeholder.png` is the default in `src/content.config.ts` and `Layout.astro`, but there is no such file in `public/static/`. Home, post list, tag pages, and any post without an image ship a broken `og:image`.
 - [x] **`image: ""` produces a wrong `og:image`.** Three posts (`aws-to-cloudflare-domain-transfer-guide`, `setting-up-coolify-aws-ec2-for-development`, `setup-airflow-part-one`) set an empty string, which bypasses the schema default and resolves to the post's own URL. Remove the key from those posts and make the schema reject or ignore `""`.
-- [ ] **Twitter card tags use `property=` instead of `name=`** in `Layout.astro`, and `og:type` is `website` on post pages (should be `article`).
+- [x] **Twitter card tags use `property=` instead of `name=`** in `Layout.astro`, and `og:type` is `website` on post pages (should be `article`).
 - [ ] **RSS items carry no `pubDate`.** The feed spreads `post.data`, which has `date`, not `pubDate`, so readers cannot order entries. Map `date` to `pubDate` explicitly instead of spreading the whole frontmatter.
 
 ## 2. Accessibility
