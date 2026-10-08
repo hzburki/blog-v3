@@ -90,8 +90,17 @@ const {
       : "light";
   };
 
+  // The favicon follows the site theme: blue in light mode, dark in dark mode.
+  const applyFavicon = (doc) => {
+    const isDark = doc.documentElement.classList.contains("dark");
+    doc
+      .querySelector('link[rel="icon"]')
+      ?.setAttribute("href", isDark ? "/favicon-dark.svg" : "/favicon.svg");
+  };
+
   const applyTheme = (doc) => {
     doc.documentElement.classList.toggle("dark", getTheme() === "dark");
+    applyFavicon(doc);
   };
 
   applyTheme(document);
@@ -101,4 +110,7 @@ const {
   document.addEventListener("astro:before-swap", (event) => {
     applyTheme(event.newDocument);
   });
+
+  // Dispatched by the theme toggle after it flips the class.
+  document.addEventListener("theme-change", () => applyFavicon(document));
 </script>

@@ -52,7 +52,9 @@ The pure helpers behind it (`getVisiblePosts`, `groupPostsByTag`, `countPostsByT
 
 ### Dark mode
 
-Class-based: `global.css` declares `@custom-variant dark` keyed on `.dark`. An inline script in `Layout.astro` sets the class on `<html>` from `localStorage.theme`, falling back to `prefers-color-scheme`, and a `MutationObserver` writes changes back to `localStorage`. `theme-toggle.astro` just toggles the `dark` class. Both scripts re-run on `astro:after-swap` because the site uses view transitions; any new script that touches the DOM needs the same treatment.
+Class-based: `global.css` declares `@custom-variant dark` keyed on `.dark`. An inline script in `Layout.astro` sets the class on `<html>` from `localStorage.theme`, falling back to `prefers-color-scheme`. The client router replaces `<html>`'s attributes on navigation, so the script also sets the class on the incoming document in `astro:before-swap`. `theme-toggle.astro` flips the class, saves the choice to `localStorage`, and dispatches a `theme-change` event.
+
+The favicon follows the site theme, not the browser's: `public/favicon.svg` (blue) in light mode and `public/favicon-dark.svg` in dark mode. The same inline script swaps the `<link rel="icon">` href on load, on navigation, and on `theme-change`.
 
 Shiki renders dual themes (`catppuccin-latte` / `catppuccin-mocha`); the `html.dark .astro-code` rule in `global.css` switches to the dark one.
 
