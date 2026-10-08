@@ -11,3 +11,18 @@ export function getVisiblePosts<T extends PostLike>(
     .filter((post) => includeDrafts || post.data.status === "published")
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
+
+// Maps each tag to the posts carrying it, keeping the order of the input.
+export function groupPostsByTag<T extends { data: { tags: string[] } }>(
+  posts: T[],
+): Map<string, T[]> {
+  const groups = new Map<string, T[]>();
+
+  for (const post of posts) {
+    for (const tag of new Set(post.data.tags)) {
+      groups.set(tag, [...(groups.get(tag) ?? []), post]);
+    }
+  }
+
+  return groups;
+}

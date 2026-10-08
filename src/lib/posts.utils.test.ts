@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { getVisiblePosts } from "./posts.utils.ts";
+import { getVisiblePosts, groupPostsByTag } from "./posts.utils.ts";
 
 const post = (id: string, status: "draft" | "published", date: string) => ({
   id,
@@ -42,4 +42,50 @@ test("only drafts yields an empty list in production", () => {
     getVisiblePosts([post("d", "draft", "2025-01-01")], false),
     [],
   );
+});
+
+const tagged = (id: string, status: "draft" | "published", tags: string[]) => ({
+  id,
+  data: { status, date: new Date("2025-01-01"), tags },
+});
+
+const taggedPosts = [
+  tagged("coolify", "published", ["AWS", "DevOps"]),
+  tagged("airflow", "draft", ["Airflow", "DevOps"]),
+  tagged("billing", "published", ["AWS"]),
+];
+
+const groupIds = (groups: Map<string, { id: string }[]>) =>
+  Object.fromEntries([...groups].map(([tag, list]) => [tag, ids(list)]));
+
+test("posts are grouped under each of their tags, in input order", () => {
+  assert.deepEqual(groupIds(groupPostsByTag(taggedPosts)), {
+    AWS: ["coolify", "billing"],
+    DevOps: ["coolify", "airflow"],
+    Airflow: ["airflow"],
+  });
+});
+
+test("tag pages built from visible posts omit drafts and draft-only tags", () => {
+  const groups = groupPostsByTag(getVisiblePosts(taggedPosts, false));
+
+  assert.deepEqual(groupIds(groups), {
+    AWS: ["coolify", "billing"],
+    DevOps: ["coolify"],
+  });
+});
+
+test("a tag repeated on one post lists that post once", () => {
+  const groups = groupPostsByTag([tagged("dup", "published", ["AWS", "AWS"])]);
+
+  assert.deepEqual(groupIds(groups), { AWS: ["dup"] });
+});
+
+test("tags differing only in case are separate groups", () => {
+  const groups = groupPostsByTag([
+    tagged("a", "published", ["DevOps"]),
+    tagged("b", "published", ["devops"]),
+  ]);
+
+  assert.deepEqual([...groups.keys()], ["DevOps", "devops"]);
 });

@@ -48,9 +48,7 @@ React is used only for the three MDX components in `src/components/blog/`; every
 
 Posts with `status: "draft"` are meant to be visible in dev and absent from production. There is no shared helper: each page checks `import.meta.env.DEV` and `post.data.status` on its own. Any new page or endpoint that reads the collection has to repeat that filter.
 
-`getVisiblePosts()` in `src/lib/posts.utils.ts` does the filter and the newest-first sort; the RSS feed uses it and new code should too. One place still does not filter, so drafts leak into production output:
-
-- `src/pages/tags/[tag].astro` lists drafts and generates pages for draft-only tags. The linked post page is not built, so those links 404.
+`getVisiblePosts()` in `src/lib/posts.utils.ts` does the filter and the newest-first sort. The RSS feed and tag pages use it, and new code should too. `posts/index.astro`, `posts/[...slug].astro`, and `tags/index.astro` still carry their own inline copy of the check.
 
 ### Dark mode
 
