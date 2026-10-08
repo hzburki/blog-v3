@@ -26,3 +26,12 @@ export function groupPostsByTag<T extends { data: { tags: string[] } }>(
 
   return groups;
 }
+
+// [tag, number of posts] pairs, sorted alphabetically by tag.
+export function countPostsByTag<T extends { data: { tags: string[] } }>(
+  posts: T[],
+): [string, number][] {
+  return [...groupPostsByTag(posts)]
+    .map(([tag, list]): [string, number] => [tag, list.length])
+    .sort((a, b) => a[0].localeCompare(b[0]));
+}

@@ -1,30 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import TagBadge from "../../components/tag-badge.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
+import { countPostsByTag, getPosts } from "../../lib";
 
-const isDev = import.meta.env.DEV;
-const posts = await getCollection("posts");
-
-// Show only published posts in production
-const publishedPosts = isDev
-  ? posts
-  : posts.filter((post) => post.data.status === "published");
-
-// Extract all tags from published posts
-const allTags = publishedPosts.flatMap((post) => post.data.tags);
-
-// Count occurrences of each tag
-const tagCounts = allTags.reduce<Record<string, number>>((acc, tag) => {
-  acc[tag] = (acc[tag] || 0) + 1;
-  return acc;
-}, {});
-
-// Convert to array of [tag, count] pairs and sort alphabetically
-const sortedTags = Object.entries(tagCounts).sort((a, b) =>
-  a[0].localeCompare(b[0]),
-);
+const sortedTags = countPostsByTag(await getPosts());
 ---
 
 <Layout
@@ -35,13 +15,11 @@ const sortedTags = Object.entries(tagCounts).sort((a, b) =>
   <main>
     <div>
       <ul class="flex flex-wrap gap-2">
-        {
-          sortedTags.map(([tag, count]) => (
-            <li>
-              <TagBadge tag={tag} count={count} />
-            </li>
-          ))
-        }
+        {sortedTags.map(([tag, count]) => (
+          <li>
+            <TagBadge tag={tag} count={count} />
+          </li>
+        ))}
       </ul>
     </div>
   </main>

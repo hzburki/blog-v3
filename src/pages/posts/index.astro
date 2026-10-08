@@ -1,38 +1,21 @@
 ---
-import { getCollection } from "astro:content";
-
 // Intenal Components
 import BlogCard from "../../components/blog-card.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
+import { getPosts } from "../../lib";
 
-const isDev = import.meta.env.DEV;
-const collection = await getCollection("posts");
-
-// Show only published posts in production
-let filteredPosts = collection;
-if (!isDev) {
-  filteredPosts = collection.filter((post) => post.data.status === "published");
-}
-
-// Sort posts by date
-const sortedPosts = filteredPosts.sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
-
-const posts = sortedPosts;
+const posts = await getPosts();
 ---
 
 <Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <main>
     <ul class="flex flex-col gap-1.5">
-      {
-        posts.map((post) => (
-          <li>
-            <BlogCard post={post} />
-          </li>
-        ))
-      }
+      {posts.map((post) => (
+        <li>
+          <BlogCard post={post} />
+        </li>
+      ))}
     </ul>
   </main>
 </Layout>

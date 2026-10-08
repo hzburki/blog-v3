@@ -1,16 +1,12 @@
 ---
-import { getCollection } from "astro:content";
 import BlogCard from "../../components/blog-card.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import Layout from "../../layouts/Layout.astro";
-import { getVisiblePosts, groupPostsByTag } from "../../lib";
+import { getPosts, groupPostsByTag } from "../../lib";
 
 export async function getStaticPaths() {
   // Drafts are left out in production, so draft-only tags get no page
-  const posts = getVisiblePosts(
-    await getCollection("posts"),
-    import.meta.env.DEV,
-  );
+  const posts = await getPosts();
 
   return [...groupPostsByTag(posts)].map(([tag, posts]) => ({
     params: { tag },

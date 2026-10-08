@@ -1,20 +1,13 @@
 ---
-import { type CollectionEntry, getCollection, render } from "astro:content";
+import { type CollectionEntry, render } from "astro:content";
 import TagBadge from "../../components/tag-badge.astro";
 import Layout from "../../layouts/Layout.astro";
-import { formatDate } from "../../lib";
+import { formatDate, getPosts } from "../../lib";
 
 export async function getStaticPaths() {
-  const isDev = import.meta.env.DEV;
-  const allPosts = await getCollection("posts");
+  const posts = await getPosts();
 
-  // show only published posts in production
-  let filteredPosts = allPosts;
-  if (!isDev) {
-    filteredPosts = allPosts.filter((post) => post.data.status === "published");
-  }
-
-  return filteredPosts.map((post) => ({
+  return posts.map((post) => ({
     params: { slug: post.id },
     props: post,
   }));
@@ -33,25 +26,21 @@ const { Content } = await render(post);
   <main>
     <h1 class="mb-5 text-xl font-medium">
       {post.data.title}
-      {
-        post.data.status === "draft" && (
-          <span class="text-sm font-light text-zinc-500">(Draft)</span>
-        )
-      }
+      {post.data.status === "draft" && (
+        <span class="text-sm font-light text-zinc-500">(Draft)</span>
+      )}
     </h1>
     <div class="mb-3 flex flex-wrap gap-2">
-      {post.data.tags.map((tag) => <TagBadge tag={tag} />)}
+      {post.data.tags.map((tag) => (
+        <TagBadge tag={tag} />
+      ))}
     </div>
-    <p class="mb-1 font-medium text-zinc-500">
-      {formatDate(post.data.date)}
-    </p>
-    <div class="mb-8 border-b-0 border-t border-zinc-800 dark:border-zinc-200">
-    </div>
+    <p class="mb-1 font-medium text-zinc-500">{formatDate(post.data.date)}</p>
+    <div class="mb-8 border-b-0 border-t border-zinc-800 dark:border-zinc-200"></div>
     <article>
       <Content />
     </article>
-    <div class="mb-8 border-b-0 border-t border-zinc-800 dark:border-zinc-200">
-    </div>
+    <div class="mb-8 border-b-0 border-t border-zinc-800 dark:border-zinc-200"></div>
 
     <a
       href="/posts"

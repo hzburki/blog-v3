@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { getVisiblePosts, groupPostsByTag } from "./posts.utils.ts";
+import {
+  countPostsByTag,
+  getVisiblePosts,
+  groupPostsByTag,
+} from "./posts.utils.ts";
 
 const post = (id: string, status: "draft" | "published", date: string) => ({
   id,
@@ -88,4 +92,19 @@ test("tags differing only in case are separate groups", () => {
   ]);
 
   assert.deepEqual([...groups.keys()], ["DevOps", "devops"]);
+});
+
+test("tag counts are sorted alphabetically and count each post once", () => {
+  assert.deepEqual(countPostsByTag(taggedPosts), [
+    ["Airflow", 1],
+    ["AWS", 2],
+    ["DevOps", 2],
+  ]);
+});
+
+test("tag counts for visible posts leave out drafts", () => {
+  assert.deepEqual(countPostsByTag(getVisiblePosts(taggedPosts, false)), [
+    ["AWS", 2],
+    ["DevOps", 1],
+  ]);
 });

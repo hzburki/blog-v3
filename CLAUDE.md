@@ -46,9 +46,9 @@ React is used only for the three MDX components in `src/components/blog/`; every
 
 ### Drafts
 
-Posts with `status: "draft"` are meant to be visible in dev and absent from production. There is no shared helper: each page checks `import.meta.env.DEV` and `post.data.status` on its own. Any new page or endpoint that reads the collection has to repeat that filter.
+Posts with `status: "draft"` are visible in dev and absent from production. Every page and endpoint reads posts through `getPosts()` in `src/lib/content.utils.ts`, which applies that filter and sorts newest first. Do not call `getCollection("posts")` anywhere else; a unit test fails if you do.
 
-`getVisiblePosts()` in `src/lib/posts.utils.ts` does the filter and the newest-first sort. The RSS feed and tag pages use it, and new code should too. `posts/index.astro`, `posts/[...slug].astro`, and `tags/index.astro` still carry their own inline copy of the check.
+The pure helpers behind it (`getVisiblePosts`, `groupPostsByTag`, `countPostsByTag`) live in `src/lib/posts.utils.ts` so they can be tested without Astro.
 
 ### Dark mode
 
@@ -120,7 +120,7 @@ import { Accordion, Callout, Image } from "../../components/blog";
 
 ## Known issues
 
-- The default OG image `/static/blog-placeholder.png` (referenced in `content.config.ts` and `Layout.astro`) does not exist in `public/`, so pages without a feature image ship a broken `og:image`.
+- `public/static/blog-placeholder.png` (1200x630) is the default `og:image` for every page without a feature image.
 - `Callout` and `Accordion` have no `dark:` variants.
 - `astro.config.mjs` sets `compressHTML: true` on purpose. Astro 7's default (`'jsx'`) strips the spaces around inline links in `.astro` templates such as the home page bio.
 - TypeScript is held at 6.x because `@astrojs/check` does not support TypeScript 7 yet.
